@@ -3,14 +3,13 @@ import PropTypes from 'prop-types';
 import {NavigationMenu, Provider} from '@shopify/app-bridge-react';
 import {useHistory, useLocation} from 'react-router-dom';
 import {getUrl} from '@assets/helpers/getUrl';
+import {getHost} from '@assets/helpers';
 
 export default function AppBridgeProvider({children}) {
   const {push} = useHistory();
   const location = useLocation();
   const [appBridgeConfig] = useState(() => {
-    const localStorageHost = localStorage.getItem('avada-dev-host');
-    const host = new URLSearchParams(location.search).get('host') || localStorageHost;
-    localStorage.setItem('avada-dev-host', host);
+    const host = getHost()
 
     return {
       host,
