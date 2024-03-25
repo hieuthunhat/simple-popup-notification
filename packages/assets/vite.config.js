@@ -136,7 +136,7 @@ export default defineConfig({
         return html;
       }
     },
-    react()
+    react({jsxRuntime: 'classic'})
   ],
   optimizeDeps: {
     force: true,
