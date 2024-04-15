@@ -48,23 +48,6 @@
     ora "^4.0.2"
     string-template "^1.0.0"
 
-"@avada/core@1.1.12":
-  version "1.1.12"
-  resolved "https://registry.avada.io/@avada%2fcore/-/core-1.1.12.tgz#c3900f4c2624e46973d339dcb6c585c8e38cfc4e"
-  integrity sha512-tZPbGnI2luJW+CHa47S5v550s31SJHlSi62BgGx30wkhgBOlKl1KYLC6mGa3NEyQU0tp2R/asqtJGdrY5o8aZQ==
-  dependencies:
-    "@avada/shopify-api" "1.0.0"
-    "@shopify/koa-shopify-webhooks" "^5.0.2"
-    camelcase-keys "^6.1.2"
-    crypto-js "^4.0.0"
-    firebase-admin "^11.5.0"
-    koa "^2.13.4"
-    koa-router "^7.4.0"
-    node-fetch "2.6.7"
-    nonce "^1.0.4"
-    normalize-url "^5.0.0"
-    safe-compare "^1.1.4"
-    uuid "^8.3.2"
 
 "@avada/firestore-utils@0.0.3":
   version "0.0.3"
