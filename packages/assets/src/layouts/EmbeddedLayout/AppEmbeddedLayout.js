@@ -3,6 +3,7 @@ import {Frame, Loading, Toast} from '@shopify/polaris';
 import PropTypes from 'prop-types';
 import {useStore} from '@assets/reducers/storeReducer';
 import {closeToast} from '@assets/actions/storeActions';
+import FullscreenModal from '@assets/components/Molecules/FullscreenModal';
 
 /**
  *
@@ -16,6 +17,7 @@ function AppEmbeddedLayout({children}) {
 
   return (
     <Frame>
+      <FullscreenModal />
       {children}
       {loading && <Loading />}
       {toast && <Toast onDismiss={() => closeToast(dispatch)} {...toast} />}

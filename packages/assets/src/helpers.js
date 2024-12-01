@@ -6,6 +6,7 @@ import {initializeApp} from 'firebase/app';
 import {getAuth} from 'firebase/auth';
 import {getApiPrefix} from '@functions/const/app';
 import {isEmbeddedApp} from '@assets/config/app';
+import isEmbeddedAppEnv from '@assets/helpers/isEmbeddedAppEnv';
 
 const app = initializeApp({
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
@@ -34,14 +35,14 @@ export function getHost() {
   return host;
 }
 
-export function createEmbedApp() {
+function createEmbedApp() {
+  if (!isEmbeddedAppEnv) return;
   const host = getHost();
   if (!host) return;
-
   return createApp({
-    apiKey: import.meta.env.VITE_SHOPIFY_API_KEY,
     host,
-    forceRedirect: true
+    forceRedirect: true,
+    apiKey: import.meta.env.VITE_SHOPIFY_API_KEY
   });
 }
 

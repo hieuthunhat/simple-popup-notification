@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import {Layout, Page, SettingToggle, Text} from '@shopify/polaris';
-import {useStore} from '@assets/reducers/storeReducer';
+import {BlockStack, Button, Card, InlineStack, Layout, Page, Text} from '@shopify/polaris';
 
 /**
  * Render a home page for overview
@@ -10,25 +9,28 @@ import {useStore} from '@assets/reducers/storeReducer';
  */
 export default function Home() {
   const [enabled, setEnabled] = useState(false);
-  const {dispatch} = useStore();
 
   return (
     <Page title="Dashboard">
       <Layout>
         <Layout.Section>
-          <SettingToggle
-            action={{
-              content: enabled ? 'Disable' : 'Enable',
-              onAction() {
-                setEnabled(prev => !prev);
-              }
-            }}
-            enabled={enabled}
-          >
-            <Text variant="bodyMd" as="span">
-              Our app is {enabled ? 'enabled' : 'disabled'} on your store
-            </Text>
-          </SettingToggle>
+          <BlockStack gap="400">
+            <Card>
+              <InlineStack blockAlign="center">
+                <Text as="span">Our app is {enabled ? 'enabled' : 'disabled'} on your store</Text>
+                <div style={{flex: 1}} />
+                <Button
+                  variant={enabled ? 'secondary' : 'primary'}
+                  onClick={() => setEnabled(prev => !prev)}
+                >
+                  {enabled ? 'Disable' : 'Enable'}
+                </Button>
+              </InlineStack>
+            </Card>
+            <Card>
+              <Button url="/fullscreen-page-a">{enabled ? 'Disable' : 'Enable'}</Button>
+            </Card>
+          </BlockStack>
         </Layout.Section>
       </Layout>
     </Page>

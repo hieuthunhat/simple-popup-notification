@@ -30,6 +30,7 @@ app.use(contentSecurityPolicy(true));
 app.use(
   shopifyAuth({
     apiKey: shopifyConfig.apiKey,
+    accessTokenKey: shopifyConfig.accessTokenKey,
     firebaseApiKey: shopifyConfig.firebaseApiKey,
     scopes: shopifyConfig.scopes,
     secret: shopifyConfig.secret,
