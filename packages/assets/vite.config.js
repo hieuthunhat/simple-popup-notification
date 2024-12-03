@@ -6,44 +6,51 @@ import os from 'os';
 import EnvironmentPlugin from 'vite-plugin-environment';
 import {nodePolyfills} from 'vite-plugin-node-polyfills';
 
+const APP_PORT = 10;
+
+const localhost = '127.0.0.1';
 const isProduction = process.env.NODE_ENV === 'production';
-const host = process.env.HOST ? process.env.HOST.replace(/https?:\/\//, '') : 'localhost';
+const environmentPath = !process.env.ENVIRONMENT ? '.env' : `.env.${process.env.ENVIRONMENT}`;
+require('dotenv').config({path: path.resolve(__dirname, environmentPath)}); // read file .env.development
+const host = process.env.HOST ? process.env.HOST.replace(/https?:\/\//, '') : localhost;
 const isEmbed = process.env.IS_EMBEDDED_APP === 'yes';
-const templateFile = isEmbed ? 'index.html' : 'standalone.html';
 const templateOutFile = isEmbed ? 'embed.html' : 'standalone.html';
-const fePort = process.env.FRONTEND_PORT || 5000;
-const bePort = process.env.BACKEND_PORT || 5050;
+const fePort = process.env.FRONTEND_PORT || 3000 + APP_PORT; // vite server port
+const bePort = process.env.BACKEND_PORT || 5000 + APP_PORT; // hosting/API port
 
-console.log('Template file', templateFile, fePort, bePort);
+const [sslKey, sslCert] = ['ssl.key', 'ssl.crt'].map(file => {
+  try {
+    return fs.readFileSync(path.resolve(__dirname, '../../../ssl/' + file), 'utf8');
+  } catch (e) {
+    return null;
+  }
+});
+const isHttps = !!(sslKey && sslCert) && !process.env.DISABLE_HTTPS;
 
-let hmrConfig;
-if (host === 'localhost') {
-  hmrConfig = {
-    protocol: 'ws',
-    host: 'localhost',
-    port: 64999,
-    clientPort: 64999,
-    overlay: true
-  };
-} else {
-  hmrConfig = {
-    protocol: 'wss',
-    host: host,
-    port: fePort,
-    clientPort: 443,
-    overlay: true
-  };
-}
+console.log(['Template file', fePort, bePort, host].join(' == '));
+
+const isLocalProxy = localhost !== host;
+/** @type {HmrOptions} */
+const hmrConfig = {
+  protocol: isLocalProxy || isHttps ? 'wss' : 'ws',
+  host,
+  port: isLocalProxy ? fePort : 64999 + APP_PORT,
+  clientPort: isLocalProxy ? 443 : 64999 + APP_PORT,
+  overlay: true
+};
 
 const proxyOptions = {
-  target: `http://127.0.0.1:${bePort}`,
+  target: `http://${localhost}:${bePort}`,
   changeOrigin: false,
   secure: true,
   ws: false
 };
 
-if (!isProduction && process.env.SHOPIFY_API_KEY) {
+const shopifyApiKey = process.env.SHOPIFY_API_KEY;
+const shopifyApiSecret = process.env.SHOPIFY_API_SECRET;
+if (!isProduction && shopifyApiKey) {
   try {
+    const baseUrl = process.env.HOST.replace('https://', '');
     const runtimeFile = '../functions/.runtimeconfig.json';
     fs.readFile(runtimeFile, 'utf8', (err, data) => {
       if (err) {
@@ -51,14 +58,21 @@ if (!isProduction && process.env.SHOPIFY_API_KEY) {
         return;
       }
       const configData = JSON.parse(data);
-      configData.app.base_url = process.env.HOST.replace('https://', '');
-      configData.shopify.api_key = process.env.SHOPIFY_API_KEY;
-      configData.shopify.secret = process.env.SHOPIFY_API_SECRET;
+      if (
+        configData.app.base_url === baseUrl &&
+        configData.shopify.api_key === shopifyApiKey &&
+        configData.shopify.secret === shopifyApiSecret
+      ) {
+        return;
+      }
+
+      configData.app.base_url = baseUrl;
+      configData.shopify.api_key = shopifyApiKey;
+      configData.shopify.secret = shopifyApiSecret;
       fs.writeFileSync(runtimeFile, JSON.stringify(configData, null, 4));
     });
-
     updateEnvFile('.env.development', {
-      VITE_SHOPIFY_API_KEY: process.env.SHOPIFY_API_KEY
+      VITE_SHOPIFY_API_KEY: shopifyApiKey
     });
   } catch (e) {
     console.error('Error changing the env file');
@@ -86,6 +100,7 @@ function updateEnvFile(file, data) {
   fs.writeFileSync(file, ENV_VARS.join(os.EOL));
 }
 
+/** @type {ProxyOptions} */
 const proxyConfig = {
   '^/api(/|(\\?.*)?$)': proxyOptions,
   '^/authSa(/|(\\?.*)?$)': proxyOptions,
@@ -93,10 +108,27 @@ const proxyConfig = {
   '^/apiSa(/|(\\?.*)?$)': proxyOptions
 };
 
+/** @type {ServerOptions} */
+const serverConfig = {
+  host: isEmbed ? 'localhost' : localhost,
+  port: fePort,
+  hmr: hmrConfig,
+  proxy: proxyConfig
+};
+
+/** @type {HttpsServerOptions} */
+const https = {
+  key: sslKey,
+  cert: sslCert
+};
+
+if (!isEmbed && isHttps) serverConfig.https = https;
+
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
-    'process.env.IS_EMBEDDED_APP': process.env.IS_EMBEDDED_APP
+    'process.env.IS_EMBEDDED_APP': process.env.IS_EMBEDDED_APP,
+    'process.env.NODE_ENV': process.env.NODE_ENV
   },
   plugins: [
     nodePolyfills(),
@@ -105,9 +137,9 @@ export default defineConfig({
       {
         IS_EMBEDDED_APP: true,
         SHOPIFY_API_KEY: null,
-        HOST: 'localhost',
-        FRONTEND_PORT: 5000,
-        BACKEND_PORT: 5050,
+        HOST: host,
+        FRONTEND_PORT: fePort,
+        BACKEND_PORT: bePort,
         NODE_ENV: 'development'
       },
       {
@@ -130,15 +162,20 @@ export default defineConfig({
     {
       name: 'index-html-build-replacement',
       async transformIndexHtml(html) {
-        if (!isEmbed) {
-          return html.replace('embed.js', 'standalone.js');
-        }
-        return html;
+        if (isEmbed) return html;
+
+        return html
+          .replace('embed.js', 'standalone.js')
+          .replace(
+            '<script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>',
+            ''
+          );
       }
     },
     react({jsxRuntime: 'classic'})
   ],
   optimizeDeps: {
+    entries: ['./src/**/*.{js,jsx,ts,tsx}'],
     force: true,
     esbuildOptions: {
       loader: {
@@ -155,12 +192,7 @@ export default defineConfig({
       '@functions': path.resolve(__dirname, '../functions/src')
     }
   },
-  server: {
-    host: 'localhost',
-    port: fePort,
-    hmr: hmrConfig,
-    proxy: proxyConfig
-  },
+  server: serverConfig,
   build: {
     commonjsOptions: {
       transformMixedEsModules: true

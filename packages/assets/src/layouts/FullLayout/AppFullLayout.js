@@ -27,12 +27,12 @@ export default function AppFullLayout({children}) {
   const navigationClass = [
     'Avada-ScrollBar--isSubdued',
     'Avada-Frame__Navigation',
-    isNavOpen && 'Avada-Frame__Navigation--isExpanded'
+    !isFullscreen && isNavOpen && 'Avada-Frame__Navigation--isExpanded'
   ].filter(Boolean);
 
   const contentClass = [
     'Avada-Frame__Content',
-    isNavOpen && 'Avada-Frame__Content--isExpanded'
+    !isFullscreen && isNavOpen && 'Avada-Frame__Content--isExpanded'
   ].filter(Boolean);
 
   return (

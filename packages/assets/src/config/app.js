@@ -1,4 +1,4 @@
-import appRoute from '@assets/const/app';
+import appRoute from '@avada/assets/src/const/app';
 
 export const isEmbeddedApp = process.env.IS_EMBEDDED_APP === 'yes';
 export const routePrefix = isEmbeddedApp ? appRoute.embed : appRoute.standalone;

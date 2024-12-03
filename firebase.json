@@ -10,24 +10,30 @@
   },
   "emulators": {
     "functions": {
-      "port": 5011
+      "port": 5001
     },
     "firestore": {
-      "port": 8090
+      "port": 8080
     },
     "pubsub": {
-      "port": 8095
+      "port": 8085
+    },
+    "ui": {
+      "port": 4000
     },
     "hosting": {
-      "port": 5050
+      "port": 5010
     },
     "storage": {
-      "port": 9209
+      "port": 9199
     },
-    "singleProjectMode": true,
     "auth": {
       "port": 9099
-    }
+    },
+    "database": {
+      "port": 9000
+    },
+    "singleProjectMode": true
   },
   "hosting": {
     "cleanUrls": true,
