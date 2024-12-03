@@ -4,7 +4,6 @@ import './styles/app.scss';
 import {createRoot} from 'react-dom/client';
 import * as serviceWorker from './serviceWorker';
 import {api, auth} from './helpers';
-import {isEmpty} from '@avada/utils';
 import {StoreProvider} from '@assets/reducers/storeReducer';
 import {collectActiveShopData} from '@assets/services/shopService';
 import '@shopify/polaris/build/esm/styles.css';
@@ -16,7 +15,6 @@ auth.onAuthStateChanged(async user => {
   const root = createRoot(container);
 
   if (user === null && !window.isAuthenticated) {
-    debugger;
     window.location.href = 'auth/login';
     root.render(<div />);
   } else {
@@ -26,13 +24,11 @@ auth.onAuthStateChanged(async user => {
       api('/shops'),
       auth.currentUser.getIdTokenResult()
     ]);
-    const activeShop = isEmpty(shop)
-      ? null
-      : {
-          ...firebaseUser.claims,
-          vendor: firebaseUser.claims.type || 'others',
-          ...collectActiveShopData({shop, shopInfo})
-        };
+    const activeShop = {
+      ...firebaseUser.claims,
+      vendor: firebaseUser.claims.type || 'others',
+      ...collectActiveShopData({shop, shopInfo})
+    };
     // if (activeShop) {
     //   TagManager.initialize({gtmId: 'GTM_ID'});
     //   if (!activeShop.isCrmLogin) {
@@ -56,5 +52,3 @@ auth.onAuthStateChanged(async user => {
 
 // Register a service worker for PWA application
 serviceWorker.register();
-
-if (module.hot) module.hot.accept();

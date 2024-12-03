@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Frame, Layout, Loading, Scrollable, Toast} from '@shopify/polaris';
 import PropTypes from 'prop-types';
 import {useStore} from '@assets/reducers/storeReducer';
@@ -7,6 +7,7 @@ import AppTopBar from '@assets/layouts/AppLayout/AppTopBar';
 import AppNavigation from '@assets/layouts/AppLayout/AppNavigation';
 import {isEmbeddedApp} from '@assets/config/app';
 import Footer from '@assets/components/Footer/Footer';
+import {MaxModalContext} from '@assets/contexts/maxModalContext';
 
 /**
  * Render an app layout
@@ -16,6 +17,7 @@ import Footer from '@assets/components/Footer/Footer';
  * @constructor
  */
 export default function AppFullLayout({children}) {
+  const {isFullscreen} = useContext(MaxModalContext);
   const {state, dispatch} = useStore();
   const {loading, toast} = state;
 
@@ -36,9 +38,11 @@ export default function AppFullLayout({children}) {
   return (
     <Frame topBar={<AppTopBar {...{isNavOpen, toggleOpenNav}} />}>
       <div className="Avada-Frame">
-        <div className={navigationClass.join(' ')}>
-          <AppNavigation />
-        </div>
+        {!isFullscreen && (
+          <div className={navigationClass.join(' ')}>
+            <AppNavigation />
+          </div>
+        )}
         <Scrollable className={contentClass.join(' ')}>
           {children}
           <Layout>
