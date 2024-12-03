@@ -1,11 +1,10 @@
 import axios from 'axios';
 import createApp from '@shopify/app-bridge';
-import {authenticatedFetch} from '@shopify/app-bridge-utils';
 import {Redirect} from '@shopify/app-bridge/actions';
 import {initializeApp} from 'firebase/app';
 import {getAuth} from 'firebase/auth';
 import {getApiPrefix} from '@functions/const/app';
-import {isEmbeddedApp} from '@assets/config/app';
+import isEmbeddedAppEnv from '@assets/helpers/isEmbeddedAppEnv';
 
 const app = initializeApp({
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
@@ -34,14 +33,14 @@ export function getHost() {
   return host;
 }
 
-export function createEmbedApp() {
+function createEmbedApp() {
+  if (!isEmbeddedAppEnv) return;
   const host = getHost();
   if (!host) return;
-
   return createApp({
-    apiKey: import.meta.env.VITE_SHOPIFY_API_KEY,
     host,
-    forceRedirect: true
+    forceRedirect: true,
+    apiKey: import.meta.env.VITE_SHOPIFY_API_KEY
   });
 }
 
@@ -49,10 +48,10 @@ export function createEmbedApp() {
  * @return {(uri: string, options?: {headers?, body?, method?: 'GET' | 'POST' | 'PUT' | 'DELETE'}) => Promise<any>}
  */
 function createApi() {
-  const prefix = getApiPrefix(isEmbeddedApp);
+  const prefix = getApiPrefix(isEmbeddedAppEnv);
 
-  if (isEmbeddedApp) {
-    const fetchFunction = authenticatedFetch(embedApp);
+  if (isEmbeddedAppEnv) {
+    const fetchFunction = fetch;
     return async (uri, options = {}) => {
       if (options.body) {
         options.body = JSON.stringify(options.body);

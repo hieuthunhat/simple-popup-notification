@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="shopify-api-key" content="%VITE_SHOPIFY_API_KEY%" />
   <title>Avada app</title>
   <link rel="manifest" href="/manifest.json" />
+  <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
   <style>
     html {
       /*font-size: 62.5% !important;*/
@@ -281,6 +283,6 @@
     }
   }, 7000);
 </script>
-<script type="module" src="/src/embed.js"></script>
+<script type="module" src="./src/embed.js"></script>
 </body>
 </html>

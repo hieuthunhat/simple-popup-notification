@@ -17,7 +17,7 @@ export default function Samples() {
     <Page title="Samples">
       <Layout>
         <Layout.Section>
-          <Card>
+          <Card padding="0">
             <IndexTable
               resourceName={{singular: 'todo', plural: 'todos'}}
               itemCount={todos.length}

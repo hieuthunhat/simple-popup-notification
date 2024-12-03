@@ -1,44 +1,38 @@
-import React, {useMemo, useState} from 'react';
+import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
-import {NavigationMenu, Provider} from '@shopify/app-bridge-react';
-import {useHistory, useLocation} from 'react-router-dom';
-import {getUrl} from '@assets/helpers/getUrl';
-import {getHost} from '@assets/helpers';
+import {NavMenu} from '@shopify/app-bridge-react';
+import {Link} from 'react-router-dom';
+import {MaxModalContext} from '@assets/contexts/maxModalContext';
 
 export default function AppBridgeProvider({children}) {
-  const {push} = useHistory();
-  const location = useLocation();
-  const [appBridgeConfig] = useState(() => {
-    const host = getHost()
+  const {isFullscreen} = useContext(MaxModalContext);
+  if (isFullscreen) return children; // hide navigation when open max modal
 
-    return {
-      host,
-      apiKey: import.meta.env.VITE_SHOPIFY_API_KEY,
-      forceRedirect: true
-    };
-  });
-  const history = useMemo(() => ({replace: path => push(path, {replace: true})}), [push]);
-  const router = useMemo(() => ({location, history}), [location, history]);
+  const fullNavLink = [
+    {
+      label: 'Samples',
+      destination: '/samples'
+    },
+    {
+      label: 'Settings',
+      destination: '/settings'
+    }
+  ];
 
   return (
-    <Provider router={router} config={appBridgeConfig}>
-      <NavigationMenu
-        matcher={(link, location) => {
-          return getUrl(link.destination) === location.pathname;
-        }}
-        navigationLinks={[
-          {
-            label: 'Samples',
-            destination: '/samples'
-          },
-          {
-            label: 'Settings',
-            destination: '/settings'
-          }
-        ]}
-      />
+    <>
+      <NavMenu>
+        <Link to="/embed" rel="home">
+          Home
+        </Link>
+        {fullNavLink.map(link => (
+          <Link to={link.destination} key={link.destination}>
+            {link.label}
+          </Link>
+        ))}
+      </NavMenu>
       {children}
-    </Provider>
+    </>
   );
 }
 

@@ -7,6 +7,8 @@ import Settings from '@assets/loadables/Settings/Settings';
 import {routePrefix} from '@assets/config/app';
 import Loading from '@assets/components/Loading';
 
+const FullscreenPageA = React.lazy(() => import('../pages/FullscreenPageA'));
+
 // eslint-disable-next-line react/prop-types
 const Routes = ({prefix = routePrefix}) => (
   <Suspense fallback={<Loading />}>
@@ -14,6 +16,7 @@ const Routes = ({prefix = routePrefix}) => (
       <Route exact path={prefix + '/'} component={Home} />
       <Route exact path={prefix + '/samples'} component={Samples} />
       <Route exact path={prefix + '/settings'} component={Settings} />
+      <Route exact path={prefix + '/fullscreen-page-a'} component={FullscreenPageA} />
       <Route path="*" component={NotFound} />
     </Switch>
   </Suspense>

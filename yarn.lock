@@ -48,13 +48,13 @@
     ora "^4.0.2"
     string-template "^1.0.0"
 
-"@avada/core@1.1.12":
-  version "1.1.12"
-  resolved "https://registry.avada.io/@avada%2fcore/-/core-1.1.12.tgz#efabf09e3353c8bda3ab81f476593c8c7f64fceb"
-  integrity sha512-GIEJrIoQgLPxqYxf7seK971j2bWuAVjftCWxUKnV27X5EogLSrUANih2xNhrbxGkfi7Qu/9p40TFLI4JJaypAA==
+"@avada/core@3.3.16-alpha.8":
+  version "3.3.16-alpha.8"
+  resolved "https://registry.avada.io/@avada%2fcore/-/core-3.3.16-alpha.8.tgz#a88b24d00d759d9984935905e85771c20f0b2a28"
+  integrity sha512-eprVQ5eVib3Y2IGLXzGfvzPGtJ0DLd5Uuhp1blASgBvj0xOgf6+jFke7NwshcfiQVw3pta9eswu60qW1A892Qg==
   dependencies:
     "@avada/shopify-api" "1.0.0"
-    "@shopify/koa-shopify-webhooks" "^5.0.2"
+    "@shopify/koa-shopify-webhooks" "5.0.6"
     camelcase-keys "^6.1.2"
     crypto-js "^4.0.0"
     firebase-admin "^11.5.0"
@@ -3871,12 +3871,17 @@
   resolved "https://registry.yarnpkg.com/@shopify/app-bridge-core/-/app-bridge-core-1.1.1.tgz#b8b16e7c4ba60d6d593a89f397e4abef9be6ef50"
   integrity sha512-kEnJUpkC9vDdmGMN3Mezq/FlDBqP+DFg/A1PFzqTW8FILu0wzFmz1aFk4Hxy6Y6ilceMmn8QXsyLA9DfaeH4jQ==
 
-"@shopify/app-bridge-react@^3.7.10":
-  version "3.7.10"
-  resolved "https://registry.yarnpkg.com/@shopify/app-bridge-react/-/app-bridge-react-3.7.10.tgz#92059bbdfd88d711cc19b301e413f76d419aa22b"
-  integrity sha512-MIvsSnJ/YNd8iOdfUiPJK5hPSHhQRO8PKmjfwvNqpduQiBVrN5Y29AAYth9NFwP20QMxC92MIkyYWtENYXRoVA==
+"@shopify/app-bridge-react@^4.1.5":
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@shopify/app-bridge-react/-/app-bridge-react-4.1.5.tgz#711c2ac9c44de40dae2e3e06e01a5820caa5eeae"
+  integrity sha512-5OX+bUYkvvTvz6ZsZFOFYoVTrgTxG+L4cCcesw0vaYMvOkUA7JAXJI4/g4ZwTQC9Kl+BwklXN/9IhC952cBz7A==
   dependencies:
-    "@shopify/app-bridge" "^3.7.10"
+    "@shopify/app-bridge-types" "0.0.15"
+
+"@shopify/app-bridge-types@0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@shopify/app-bridge-types/-/app-bridge-types-0.0.15.tgz#f5b7fbb57eb5b9c4497d8c36ac8986ddd2770f4e"
+  integrity sha512-7hi/DeLU5/3c7wtc+vij3T9Ga/UXtPG60v7o3hgEm1cysLQuwwHKD37uq5b3HzE6D+0ZHz26RW7LPiGU8VLOww==
 
 "@shopify/app-bridge-utils@^3.5.1":
   version "3.5.1"
@@ -3975,12 +3980,12 @@
     cachedir "^2.3.0"
     node-fetch "^3.2.10"
 
-"@shopify/koa-shopify-webhooks@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@shopify/koa-shopify-webhooks/-/koa-shopify-webhooks-5.0.2.tgz#f0dab3efa20a11ed6de2b122ed59ac1d2037d9ea"
-  integrity sha512-XkBes6Co1XmElSHofoYdNSh2wD8YUt59wULwSQVcMUz5SBB0yNfSr1yO7yUK/765i0xQRXP+kcUGw8ksxRaujg==
+"@shopify/koa-shopify-webhooks@5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@shopify/koa-shopify-webhooks/-/koa-shopify-webhooks-5.0.6.tgz#7cfe43fe61b99d18428a244941a2f8f084ceefbd"
+  integrity sha512-coUgY5BINRPF4xpP9o5vBFeQK0Ga7yXsmdutz0PnOLeFB7LusCBDFlzHmKCKXTxyIG/Lo3EjLEFZY8pGk/XksQ==
   dependencies:
-    "@shopify/network" "^3.2.0"
+    "@shopify/network" "^3.2.1"
     "@types/koa" "^2.0.0"
     koa-bodyparser ">=4.0.0 <5.0.0"
     koa-compose ">=4.0.0 <5.0.0"
@@ -3992,10 +3997,10 @@
   resolved "https://registry.yarnpkg.com/@shopify/network/-/network-1.6.4.tgz#fdfa8379cb6e06f05ee63d24aafcd6f8e275cb34"
   integrity sha512-V+//Et386LnYdtNhQ3e33AKYfU25XEt8H5XYeMqPvJZpVvC9Z1lHKQMpmM/zq13VXjPUjt9/sNxHxMP3I6cbJg==
 
-"@shopify/network@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@shopify/network/-/network-3.2.0.tgz#806421777f9a075fd6a1045526196e1c0744d4de"
-  integrity sha512-wHIvwIcvbT/z2W8CYfU8JUMItbFoDbDTnS14CD+BHO19Tq3jDBNz3hj7HSKOT+tYoOkab/Yc5/obKP7Q4x9SGA==
+"@shopify/network@^3.2.1":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@shopify/network/-/network-3.3.0.tgz#edaed928021846dd81b2c1f0eaef88a3c0c8b871"
+  integrity sha512-Lln7vglzLK9KiYhl9ucQFVM7ArlpUM21xkDriBX8kVrqsoBsi+4vFIjf1wjhNPT0J/zHMjky7jiTnxVfdm+xXw==
 
 "@shopify/plugin-cloudflare@3.48.0":
   version "3.48.0"
