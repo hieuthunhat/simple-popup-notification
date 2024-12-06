@@ -16,6 +16,10 @@ export default function AppBridgeProvider({children}) {
     {
       label: 'Settings',
       destination: '/settings'
+    },
+    {
+      label: 'Optional Scopes',
+      destination: '/optional-scopes'
     }
   ];
 
