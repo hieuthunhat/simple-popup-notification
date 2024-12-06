@@ -43,7 +43,7 @@
   "dependencies": {
     "@avada/console": "1.0.0",
     "concurrently": "^7.6.0",
-    "@avada/shopify-app": "3.48.1",
-    "@avada/shopify-cli": "3.48.0"
+    "@avada/shopify-app": "3.58.3-alpha.3",
+    "@avada/shopify-cli": "3.58.2-alpha.1"
   }
 }
