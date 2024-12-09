@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {api} from '@assets/helpers';
-import queryString from 'query-string';
+import stringify from 'qs-stringify';
 import {handleError} from '@assets/services/errorService';
 
 /**
@@ -25,16 +25,18 @@ export default function useFetchApi({
   const [data, setData] = useState(defaultData);
   const [pageInfo, setPageInfo] = useState({});
   const [count, setCount] = useState(0);
+  const [total, setTotal] = useState(0);
 
   async function fetchApi(apiUrl, params = null, keepPreviousData = false) {
     try {
       setLoading(true);
       const path = apiUrl || url;
       const separateChar = path.includes('?') ? '&' : '?';
-      const query = params ? separateChar + queryString.stringify(params) : '';
+      const query = params ? separateChar + stringify(params) : '';
       const resp = await api(path + query);
       if (resp.hasOwnProperty('pageInfo')) setPageInfo(resp.pageInfo);
       if (resp.hasOwnProperty('count')) setCount(resp.count);
+      if (resp.hasOwnProperty('total')) setTotal(resp.total);
       if (resp.hasOwnProperty('data')) {
         let newData = presentData ? presentData(resp.data) : resp.data;
         if (!Array.isArray(newData)) {
@@ -68,6 +70,8 @@ export default function useFetchApi({
     pageInfo,
     count,
     setCount,
+    total,
+    setTotal,
     loading,
     fetched,
     setFetched

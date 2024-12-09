@@ -1,91 +1,103 @@
-import React, {useRef, useState} from 'react';
-import {Modal} from '@shopify/polaris';
+import React, {useCallback, useRef, useState} from 'react';
+import {Form, Modal} from '@shopify/polaris';
 
 /**
+ *
  * @param confirmAction
+ * @param cancelAction
  * @param title
- * @param HtmlTitle
- * @param content
- * @param HtmlContent
- * @param large
- * @param loading
- * @param destructive
+ * @param {string | Element } content
+ * @param ComponentContent
  * @param buttonTitle
  * @param closeTitle
+ * @param footer
+ * @param loading
  * @param disabled
- * @param sectioned
- * @param canCloseAfterFinished
- * @param successCallback
+ * @param destructive
+ * @param setValidations
  * @param closeCallback
- * @param defaultCurrentInput
- * @returns {{openModal, closeModal, modal: JSX.Element, open: boolean, validations}}
+ * @param canCloseAfterFinished
+ * @param useForm
+ * @returns {{openModal: openModal, closeModal: closeModal, modal: React.JSX.Element, open: boolean}}
  */
 export default function useConfirmModal({
   confirmAction,
+  cancelAction,
   title = 'Are you sure to delete?',
-  HtmlTitle = null,
   content = 'Please be careful because you cannot undo this action.',
-  HtmlContent = null,
+  ComponentContent = _p => <></>,
   buttonTitle = 'Confirm',
   closeTitle = 'Cancel',
-  large = false,
+  footer = null,
   loading = false,
   disabled = false,
   destructive = false,
-  sectioned = true,
-  canCloseAfterFinished = true,
-  successCallback = () => {},
+  setValidations = () => {},
   closeCallback = () => {},
-  defaultCurrentInput = null
+  canCloseAfterFinished = true,
+  useForm = false
 }) {
   const [open, setOpen] = useState(false);
-  const input = useRef(null);
+  const currentId = useRef(null);
 
-  const openModal = (currentInput = defaultCurrentInput) => {
-    input.current = currentInput;
+  const openModal = useCallback((id = null) => {
     setOpen(true);
-  };
+    if (id !== null) currentId.current = id;
+  }, []);
 
   const closeModal = () => {
-    if (!loading) setOpen(false);
+    if (loading) return;
+    setOpen(false);
+    setValidations({});
   };
 
-  const handleClose = () => {
-    closeModal();
-    closeCallback();
-  };
-
-  const handleConfirm = () => {
-    confirmAction(input.current).then(success => {
-      if (!success) return;
-      if (canCloseAfterFinished) handleClose();
-      successCallback(success);
-    });
+  const handleConfirm = async () => {
+    const success = await confirmAction(currentId.current);
+    if (!success) return;
+    canCloseAfterFinished && closeModal();
   };
 
   const modal = (
     <Modal
-      sectioned={sectioned}
+      sectioned
       open={open}
-      large={large}
-      onClose={() => handleClose()}
-      title={HtmlTitle ? <HtmlTitle input={input} /> : title}
-      primaryAction={{
-        content: buttonTitle,
-        loading,
-        disabled,
-        destructive,
-        onAction: () => handleConfirm()
+      onClose={() => {
+        closeModal();
+        closeCallback();
       }}
-      secondaryActions={[
-        {
-          disabled: loading,
-          content: closeTitle,
-          onAction: () => handleClose()
+      title={title}
+      primaryAction={
+        buttonTitle && {
+          content: buttonTitle,
+          loading,
+          disabled,
+          destructive,
+          onAction: () => handleConfirm()
         }
-      ]}
+      }
+      secondaryActions={[
+        closeTitle && {
+          content: closeTitle,
+          onAction: () => {
+            if (cancelAction) {
+              cancelAction();
+              return;
+            }
+            closeModal();
+            closeCallback();
+          }
+        }
+      ].filter(Boolean)}
+      footer={footer}
     >
-      {HtmlContent ? <HtmlContent {...{input}} /> : content}
+      {content ||
+        (useForm ? (
+          <Form onSubmit={() => handleConfirm()} preventDefault>
+            <ComponentContent {...{closeModal, currentId}} />
+          </Form>
+        ) : (
+          <ComponentContent {...{closeModal, currentId}} />
+        ))}
     </Modal>
   );
 

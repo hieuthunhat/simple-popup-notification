@@ -6,27 +6,34 @@ import {handleError} from '@assets/services/errorService';
 
 /**
  * @param url
+ * @param fullResp
+ * @param successCallback
  * @returns {{deleting: boolean, handleDelete}}
  */
-export default function useDeleteApi({url}) {
+export default function useDeleteApi({url, fullResp = false, successCallback = () => {}}) {
   const {dispatch} = useStore();
   const [deleting, setDeleting] = useState(false);
 
   /**
    * @param data
+   * @param id
    * @returns {Promise<boolean>}
    */
-  const handleDelete = async data => {
+  const handleDelete = async ({data = {}, id = ''}) => {
     try {
       setDeleting(true);
-      const resp = await api(url, {body: {data}, method: 'DELETE'});
+      const resp = await api(id === '' ? url : `${url}/${id}`, {
+        method: 'DELETE',
+        body: data
+      });
       if (resp.success) {
         setToast(dispatch, resp.message || 'Deleted successfully');
-        return true;
+        successCallback(resp);
       }
       if (resp.error) {
         setToast(dispatch, resp.error, true);
       }
+      return fullResp ? resp : resp.success;
     } catch (e) {
       handleError(e);
       setToast(dispatch, 'Failed to delete', true);
