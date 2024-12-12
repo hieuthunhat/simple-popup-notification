@@ -7,6 +7,7 @@ import path from 'path';
 import createErrorHandler from '@functions/middleware/errorHandler';
 import firebase from 'firebase-admin';
 import appConfig from '@functions/config/app';
+import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp();
@@ -49,7 +50,8 @@ app.use(
       return (ctx.body = {
         success: true
       });
-    }
+    },
+    optionalScopes: shopifyOptionalScopes
   }).routes()
 );
 

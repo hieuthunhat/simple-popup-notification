@@ -7,6 +7,7 @@ import path from 'path';
 import {verifyEmbedRequest} from '@avada/core';
 import shopifyConfig from '@functions/config/shopify';
 import appConfig from '@functions/config/app';
+import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
 
 // Initialize all demand configuration for an application
 const api = new App();
@@ -17,7 +18,8 @@ const verifyEmbedConfig = {
   scopes: shopifyConfig.scopes,
   secret: shopifyConfig.secret,
   hostName: appConfig.baseUrl,
-  isEmbeddedApp: true
+  isEmbeddedApp: true,
+  optionalScopes: shopifyOptionalScopes
 };
 render(api, {
   cache: true,
