@@ -6,7 +6,7 @@ import os from 'os';
 import EnvironmentPlugin from 'vite-plugin-environment';
 import {nodePolyfills} from 'vite-plugin-node-polyfills';
 
-const APP_PORT = 10;
+const APP_PORT = 0;
 
 const localhost = '127.0.0.1';
 const isProduction = process.env.NODE_ENV === 'production';

@@ -1,12 +1,14 @@
 import React from 'react';
 import {Navigation} from '@shopify/polaris';
 import {useHistory, useLocation} from 'react-router-dom';
-import {ArrowLeftIcon, HomeIcon, SettingsIcon, ShareIcon} from '@shopify/polaris-icons';
+import {ArrowLeftIcon, HomeIcon} from '@shopify/polaris-icons';
 import '@assets/styles/layout/navigation.scss';
 import {useStore} from '@assets/reducers/storeReducer';
 import {isEmbeddedApp, prependRoute} from '@assets/config/app';
 import getDomain from '@assets/helpers/getDomain';
 import {getUrl} from '@assets/helpers/getUrl';
+import {navigationLinks} from '@assets/const/navigation';
+import {getMenuIcon} from '@assets/const/menuIcons';
 
 /**
  * @return {JSX.Element}
@@ -72,29 +74,14 @@ export default function AppNavigation() {
             icon: HomeIcon,
             label: 'Dashboard',
             selected: location.pathname === getUrl('/'),
-            onClick: () => {
-              history.push('/');
-            }
+            onClick: () => history.push('/')
           },
-          {
-            url: '/samples',
-            icon: ShareIcon,
-            label: 'Samples',
-            selected: location.pathname === getUrl('/samples'),
-            onClick: () => {
-              history.push('/samples');
-            }
-          }
-        ].reduce(prepareMenu, [])}
-      />
-      <Navigation.Section
-        separator
-        items={[
-          {
-            label: 'Settings',
-            url: '/settings',
-            icon: SettingsIcon
-          }
+          ...navigationLinks.map(link => ({
+            url: link.destination,
+            icon: getMenuIcon(link.destination)(),
+            label: link.label,
+            selected: location.pathname === getUrl(link.destination)
+          }))
         ].reduce(prepareMenu, [])}
       />
     </Navigation>

@@ -9,6 +9,7 @@ import {handleError} from '@assets/services/errorService';
  * @param defaultState
  * @param fullResp
  * @param useToast
+ * @param successCallback
  * @param successMsg
  * @param errorMsg
  * @returns {{editing: boolean, handleEdit}}
@@ -18,6 +19,7 @@ export default function useEditApi({
   defaultState = false,
   fullResp = false,
   useToast = true,
+  successCallback = _p => {},
   successMsg = 'Saved successfully',
   errorMsg = 'Failed to save'
 }) {
@@ -34,9 +36,10 @@ export default function useEditApi({
       setEditing(prev =>
         typeof newEditing === 'boolean' ? newEditing : {...prev, [newEditing]: true}
       );
-      const resp = await api(url, {body: {data}, method: 'PUT'});
+      const resp = await api(url, {body: data, method: 'PUT'});
       if (resp.success && useToast) {
         setToast(dispatch, resp.message || successMsg);
+        successCallback(resp);
       }
       if (resp.error) {
         setToast(dispatch, resp.error, true);
