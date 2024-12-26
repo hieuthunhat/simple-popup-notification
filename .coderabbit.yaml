@@ -149,6 +149,18 @@ reviews:
       instructions: |
         Do not use Promise or callback. Always use async/await for async operation.
 
+    - path: "**/*.js"
+      instructions: |
+        API call to Shopify using shopify-api-node should no longer make request to scripttag API, asset API since they are deprecated. Use theme app extensions or ask for Asset API whitelist.
+
+    - path: "**/*.js"
+      instructions: |
+        Should no longer use REST API to Shopify, use GraphQL API instead.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        Inside admin API endpoints like api, apiSa. Use const shop = getCurrentShopData(ctx); to get shop data instead of getting shopId via const shopId = getCurrentShop(ctx); Update to latest @avada/core if needed.
+        This shop data will be store ctx.state.user via verifyEmbedRequest middleware.
 
 chat:
   auto_reply: true
