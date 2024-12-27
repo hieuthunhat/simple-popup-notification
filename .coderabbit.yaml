@@ -75,6 +75,11 @@ reviews:
     - path: "packages/scripttag/**/*.js"
       instructions: |
         You should use React.lazy, code splitting, tree shaking to reduce the bundle size. Avoid importing the whole library if you are using only a few functions.
+        For example, library like lodash, moment, crypto-js, etc. Use import AES from 'crypto-js/aes'; instead of import crypto from 'crypto-js';
+
+    - path: "packages/scripttag/**/*.js"
+      instructions: |
+        Do not use large-size package, or by mistake include Polaris to scripttag. It would case the scripttag to be slow and increase the bundle size.
 
     - path: "**/*.js"
       instructions: |
@@ -168,5 +173,48 @@ reviews:
 
         console.log("current user", shopId, JSON.string(user || {}))
 
+    - path: "**/*.js"
+      instructions: |
+        Do not use && operator to filter item in an array. It will insert an false value to the array. Use filter instead. Or afterwards, use filter(Boolean) to remove false value.
+
+    - path: "**/*.js"
+      instructions: |
+        Name your React component props semantic and friendly. A component like Sheet should have props like title, children, onClose, open, animationSpeed instead of status, handleClose, animation. It make for the person who reuse the component find it hard to use.
+
+    - path: "**/*.js"
+      instructions: |
+        We are using @shopify/polaris v13 for our admin UI. Follow Polaris guideline and use correct components. Don't reinvent the wheel. Use Polaris components as much as possible.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        Don't say docs.size > 0 to check if a collection is empty. Use docs.empty instead with Firestore.
+
+    - path: "**/*.js"
+      instructions: |
+        Do not declare an empty array and push items to it. Use map, filter, reduce instead. It is more readable and less error-prone.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        While get data from Firestore with doc.data(), use import {formatDateFields} from '@avada/firestore-utils'; to format the date fields to JS Date object. It will help you to work with date object easier. No need to use like: doc.data().createdAt.toDate()
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        If you check if exists, for example, check if a shop has default setting or not, where query it by shopId, extra conditions if needed, so remember to limit(1) to get only 1 document. It will save you cost and time.
+
+    - path: "**/*.js"
+      instructions: |
+        Don't compare === or !== with a string value like: layout === 'grid'. Use enum or constant instead. It will prevent typo and make the code more readable.
+
+    - path: "**/*.js"
+      instructions: |
+        Don't commit serviceAccount, accessToken to the repository. Use environment variables instead. It is forbidden to commit sensitive data to the repository.
+
+    - path: "**/*.js"
+      instructions: |
+        A function return value should be consistent. It cannot return array in one case and object in another case. It should return the same type of value in all cases, even in catch block.
+
+    - path: "packages/assets/**/*.js"
+      instructions: |
+        With new page route register, use react-loadable to code-split the page. Use import Translation from '../loadables/Translation'; instead of import Translation from '../pages/Translation';. It will help to reduce the bundle size.
 chat:
   auto_reply: true
