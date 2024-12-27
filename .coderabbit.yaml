@@ -34,7 +34,7 @@ reviews:
 
     - path: "**/*.js"
       instructions: |
-        We prefer functional programming style. Avoid using loops and use map, filter, reduce instead. Use arrow functions instead of function expressions.
+        We prefer functional programming style. Avoid using loops and use map, filter, reduce instead.
 
     - path: "**/*.js"
       instructions: |
@@ -42,7 +42,7 @@ reviews:
 
     - path: "**/*.js"
       instructions: |
-        If you are using more than 3 parameters in a function, consider using object destructuring or passing an object instead of multiple parameters.
+        If you are using more than 3 parameters in a function, consider using object destructuring or passing an object instead of multiple parameters. Params with default values should be at the end.
 
     - path: "**/*.js"
       instructions: |
@@ -70,7 +70,7 @@ reviews:
 
     - path: "**/*.scss"
       instructions: |
-        You should follow BEM naming convention for CSS classes. Block__Element--Modifier. For example, .header__logo--small.
+        You should follow BEM naming convention for CSS classes. For example, .Avada-FAQ__MessageText--unsupported-format
 
     - path: "packages/scripttag/**/*.js"
       instructions: |
