@@ -216,5 +216,22 @@ reviews:
     - path: "packages/assets/**/*.js"
       instructions: |
         With new page route register, use react-loadable to code-split the page. Use import Translation from '../loadables/Translation'; instead of import Translation from '../pages/Translation';. It will help to reduce the bundle size.
+
+    - path: "**/*.js"
+      instructions: |
+        Break down functions into small, well-defined units that handle a single task to improve maintainability, ideally under 100 lines.
+
+    - path: "**/*.js"
+      instructions: |
+        Keep React components small and focused. A component should handle a single responsibility or UI part.
+
+    - path: "packages/assets/*.js"
+      instructions: |
+        Use useContext to avoid deeply nested prop passing in React component.
+
+    - path: "packages/assets/*.js"
+      instructions: |
+        Keep React state localized whenever possible. Avoid using global state unnecessarily.
+
 chat:
   auto_reply: true
