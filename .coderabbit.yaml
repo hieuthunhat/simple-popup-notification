@@ -62,7 +62,7 @@ reviews:
 
     - path: "**/*.js"
       instructions: |
-        See if you can use Promise.all to run multiple promises concurrently instead of sequentially to save time if possible.
+        See if you can use Promise.all to run multiple promises concurrently instead of sequentially to save time if possible. If you have multiple await calls that are not dependent on each other, you can use Promise.all to run them concurrently.
 
     - path: "packages/assets/*.js"
       instructions: |
@@ -161,6 +161,12 @@ reviews:
       instructions: |
         Inside admin API endpoints like api, apiSa. Use const shop = getCurrentShopData(ctx); to get shop data instead of getting shopId via const shopId = getCurrentShop(ctx); Update to latest @avada/core if needed.
         This shop data will be store ctx.state.user via verifyEmbedRequest middleware.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        If you want to log data to Google Cloud Logging by console.log, console.error, etc. Provide contextual description for your logging, also if it is an object, it take multiple line in logging, JSON.stringify it if it is object or array:
+
+        console.log("current user", shopId, JSON.string(user || {}))
 
 chat:
   auto_reply: true
