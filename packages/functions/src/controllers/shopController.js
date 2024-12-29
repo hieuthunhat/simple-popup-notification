@@ -9,5 +9,6 @@ import {getShopById} from '@functions/repositories/shopRepository';
 export async function getUserShops(ctx) {
   const shopId = getCurrentShop(ctx);
   const [shop, shopInfo] = await Promise.all([getShopById(shopId), getShopInfoByShopId(shopId)]);
+
   ctx.body = {shop, shopInfo};
 }
