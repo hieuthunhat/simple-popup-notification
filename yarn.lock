@@ -98,10 +98,10 @@
     tslib "^2.0.3"
     uuid "^8.3.1"
 
-"@avada/shopify-app@3.58.3-alpha.3":
-  version "3.58.3-alpha.3"
-  resolved "https://registry.avada.io/@avada%2fshopify-app/-/shopify-app-3.58.3-alpha.3.tgz#f6daffb7550412b53fecb2ace8141ca3867e3a35"
-  integrity sha512-Kn3MFK3zH6vi1qEKzuUlVrvjpwnrOyRc2SbSSTHVRmwrLSwMctq58bNxVXRgPPOBpSldxb7xsYMmw/J8FvB9PQ==
+"@avada/shopify-app@3.58.3-alpha.4":
+  version "3.58.3-alpha.4"
+  resolved "https://registry.avada.io/@avada%2fshopify-app/-/shopify-app-3.58.3-alpha.4.tgz#5a697c36527f92b77a1887cb2e0a232ded86a1d0"
+  integrity sha512-2R4xT9Gsq4431588oW/ta7cyGbk91rmaSpmlaVOWgf4Z8sMEpNXKcKVg8AtzGtrC/YC3ynGRIRpJ0q7xic63Tw==
   dependencies:
     "@luckycatfactory/esbuild-graphql-loader" "3.8.1"
     "@oclif/core" "3.19.6"
@@ -127,10 +127,10 @@
     serve-static "1.15.0"
     ws "8.13.0"
 
-"@avada/shopify-cli@3.58.2-alpha.1":
-  version "3.58.2-alpha.1"
-  resolved "https://registry.avada.io/@avada%2fshopify-cli/-/shopify-cli-3.58.2-alpha.1.tgz#194a302608b5c7a2b9053127b52511a3fa1606d9"
-  integrity sha512-964gr9eFqVqq84IS7xUJkZoBSWNFXtVPtXy8yyWO3hYQf2cteB0FxOxi0ta0kkNV/podpH32ZibzVr5DESK46g==
+"@avada/shopify-cli@3.58.2-alpha.3":
+  version "3.58.2-alpha.3"
+  resolved "https://registry.avada.io/@avada%2fshopify-cli/-/shopify-cli-3.58.2-alpha.3.tgz#04d44706b2cda6997cf1662664becd6684ca6b42"
+  integrity sha512-Jg562FPaNhWKGDpz/HlZD3m5cRcWNgO3qh7dasoBjOgPSFVdtv8r5sPMyaudbc/9TOftbadmB0gAoU1EcpKPNQ==
   dependencies:
     "@oclif/core" "3.19.6"
     "@oclif/plugin-commands" "2.2.28"

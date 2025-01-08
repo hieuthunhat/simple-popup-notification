@@ -71,12 +71,28 @@ if (!isProduction && shopifyApiKey) {
       configData.shopify.secret = shopifyApiSecret;
       fs.writeFileSync(runtimeFile, JSON.stringify(configData, null, 4));
     });
+
+    updateThemeAppExtFile('../../extensions/theme-extension/assets/avada-embed.js');
+
     updateEnvFile('.env.development', {
       VITE_SHOPIFY_API_KEY: shopifyApiKey
     });
   } catch (e) {
     console.error('Error changing the env file');
   }
+}
+
+/**
+ *
+ * @param file
+ */
+function updateThemeAppExtFile(file) {
+  const fileContent = fs.readFileSync(file, 'utf8');
+  const regex = /const BASE_URL\s*=\s*(['"`])(.*?)\1/;
+  const url = `${process.env.HOST}/scripttag`;
+  const updatedContent = fileContent.replace(regex, `const BASE_URL = '${url}'`);
+  // write everything back to the file system
+  fs.writeFileSync(file, updatedContent);
 }
 
 /**
@@ -105,7 +121,8 @@ const proxyConfig = {
   '^/api(/|(\\?.*)?$)': proxyOptions,
   '^/authSa(/|(\\?.*)?$)': proxyOptions,
   '^/auth(/|(\\?.*)?$)': proxyOptions,
-  '^/apiSa(/|(\\?.*)?$)': proxyOptions
+  '^/apiSa(/|(\\?.*)?$)': proxyOptions,
+  '^/scripttag(/|(\\?.*)?$)': proxyOptions
 };
 
 /** @type {ServerOptions} */
