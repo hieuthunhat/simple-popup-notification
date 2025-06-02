@@ -44,8 +44,7 @@
   },
   "dependencies": {
     "@avada/console": "1.0.0",
-    "@avada/shopify-app": "3.58.3-alpha.4",
-    "@avada/shopify-cli": "3.58.2-alpha.3",
+    "@shopify/cli": "3.80.7-alpha.10",
     "concurrently": "^7.6.0"
   },
   "packageManager": "yarn@4.9.1"
