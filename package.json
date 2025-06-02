@@ -32,20 +32,20 @@
   },
   "devDependencies": {
     "babel-jest": "^24.9.0",
+    "delay-cli": "2.0.0",
     "eslint": "^6.3.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^6.2.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.16.0",
+    "firebase-tools": "^12.9.1",
     "jest": "^24.9.0",
-    "prettier": "^1.18.2",
-    "delay-cli": "2.0.0",
-    "firebase-tools": "^12.9.1"
+    "prettier": "^1.18.2"
   },
   "dependencies": {
     "@avada/console": "1.0.0",
-    "concurrently": "^7.6.0",
-    "@avada/shopify-app": "3.58.3-alpha.4",
-    "@avada/shopify-cli": "3.58.2-alpha.3"
-  }
+    "@shopify/cli": "3.80.7-alpha.10",
+    "concurrently": "^7.6.0"
+  },
+  "packageManager": "yarn@4.9.1"
 }
