@@ -82,3 +82,4 @@ serviceAccount.*.json
 
 # Shopify
 shopify.**.toml
+.yarn/
