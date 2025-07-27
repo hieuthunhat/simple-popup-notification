@@ -14,7 +14,7 @@
     "emulators": "npx kill-port 8095 && GOOGLE_APPLICATION_CREDENTIALS=serviceAccount.development.json NODE_ENV=development ./node_modules/.bin/firebase emulators:start --only hosting,functions,pubsub",
     "predeploy": "yarn workspace @avada/assets run production && yarn workspace @avada/functions run production",
     "eslint-fix": "npm --prefix packages/assets/ run eslint-fix && npm --prefix packages/functions/ run eslint-fix",
-    "start-dev-embed": "concurrently \"yarn workspace @avada/functions run watch\"",
+    "start-dev-embed": "concurrently \"yarn workspace @avada/functions run watch\" \"npm --prefix packages/scripttag/ run watch\"",
     "start-dev": "concurrently \"yarn workspace @avada/assets run watch\" \"yarn workspace @avada/functions run watch\"",
     "dev": "shopify app dev --skip-dependencies-installation",
     "dev:local": "shopify app dev --use-localhost",
