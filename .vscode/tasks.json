@@ -6,9 +6,10 @@
 			"script": "emulators",
 			"problemMatcher": [],
 			"label": "npm: emulators",
-			"detail": "npx kill-port 8095 && ./node_modules/.bin/firebase emulators:start --only hosting,functions,pubsub",
+			"detail": "npx kill-port 8085 && set GOOGLE_APPLICATION_CREDENTIALS=packages/functions/serviceAccount.development.json && set NODE_ENV=development && ./node_modules/.bin/firebase emulators:start --only hosting,functions,pubsub",
 			"env": {
-				"GOOGLE_APPLICATION_CREDENTIALS": "serviceAccount.development.json"
+				"GOOGLE_APPLICATION_CREDENTIALS": "packages/functions/serviceAccount.development.json",
+				"NODE_ENV": "development"
 			}
 		}
 	]

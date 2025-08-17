@@ -1,8 +1,9 @@
 import React from 'react';
-import {Frame, Loading, Toast} from '@shopify/polaris';
+import {Frame, Loading, Navigation, Toast} from '@shopify/polaris';
 import PropTypes from 'prop-types';
 import {useStore} from '@assets/reducers/storeReducer';
 import {closeToast} from '@assets/actions/storeActions';
+import {HomeIcon, NotificationFilledIcon, SettingsFilledIcon} from '@shopify/polaris-icons';
 
 /**
  *
@@ -14,8 +15,32 @@ function AppEmbeddedLayout({children}) {
   const {state, dispatch} = useStore();
   const {loading, toast} = state;
 
+  const navigation = (
+    <Navigation location="/">
+      <Navigation.Section
+        items={[
+          {
+            url: '#',
+            label: 'Home',
+            icon: HomeIcon
+          },
+          {
+            url: '/notifications',
+            label: 'Notifications',
+            icon: NotificationFilledIcon
+          },
+          {
+            url: '/settings',
+            label: 'Settings',
+            icon: SettingsFilledIcon
+          }
+        ]}
+      />
+    </Navigation>
+  );
+
   return (
-    <Frame>
+    <Frame navigation={navigation}>
       {children}
       {loading && <Loading />}
       {toast && <Toast onDismiss={() => closeToast(dispatch)} {...toast} />}

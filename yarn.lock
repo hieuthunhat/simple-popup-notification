@@ -160,7 +160,7 @@ __metadata:
     "@shopify/app-bridge-react": "npm:^4.1.5"
     "@shopify/app-bridge-utils": "npm:^3.5.1"
     "@shopify/polaris": "npm:13.9.1"
-    "@shopify/polaris-icons": "npm:9.3.0"
+    "@shopify/polaris-icons": "npm:^9.3.1"
     "@vitejs/plugin-react": "npm:^4.2.1"
     axios: "npm:^0.27.2"
     babel-eslint: "npm:^10.0.3"
@@ -5091,16 +5091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shopify/polaris-icons@npm:9.3.0":
-  version: 9.3.0
-  resolution: "@shopify/polaris-icons@npm:9.3.0"
-  peerDependencies:
-    react: "*"
-  checksum: 10c0/5ffecb4501578b68fc8e0c0220feed1816e118c3f9027f49dc2237df30a9bd62be66c319339bc8c6cbb9c712f97d0c5880ce0a990cc4cdde2e5af895ae68cfe7
-  languageName: node
-  linkType: hard
-
-"@shopify/polaris-icons@npm:^9.3.0":
+"@shopify/polaris-icons@npm:^9.3.0, @shopify/polaris-icons@npm:^9.3.1":
   version: 9.3.1
   resolution: "@shopify/polaris-icons@npm:9.3.1"
   peerDependencies:
