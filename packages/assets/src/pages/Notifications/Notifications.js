@@ -1,16 +1,7 @@
-import React, { useState } from 'react';
-import {
-  Card,
-  IndexTable,
-  Layout,
-  Page,
-  useIndexResourceState,
-  Text,
-  Box,
-  Label
-} from '@shopify/polaris';
+import React, {useState} from 'react';
+import {Card, IndexTable, Layout, Page, useIndexResourceState} from '@shopify/polaris';
 import useFetchApi from '@assets/hooks/api/useFetchApi';
-import NotificationBox from '../../components/NotificationBox/NotificationBox';
+import NotificationPopup from '../../components/NotificationPopup/NotificationPopup';
 
 export default function Notifications() {
   const {data: notifications, loading} = useFetchApi({url: '/samples'});
@@ -49,7 +40,7 @@ export default function Notifications() {
                   selected={selectedResources.includes(id)}
                 >
                   <IndexTable.Cell>
-                    <NotificationBox />
+                    <NotificationPopup />
                   </IndexTable.Cell>
                 </IndexTable.Row>
               ))}
