@@ -1,13 +1,25 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Card, InlineStack, Layout, Page, Tabs} from '@shopify/polaris';
 import NotificationPopup from '../../components/NotificationPopup/NotificationPopup';
 import DisplayComponent from '../../components/DisplayComponent/DisplayComponent';
 import TriggerComponent from '../../components/TriggerComponent/TriggerComponent';
+import useFetchApi from '../../hooks/api/useFetchApi';
+import {defaultSettings} from './DefaultSettings';
+import {api} from '../../helpers';
 
 /**
  * @return {JSX.Element}
  */
 export default function Settings() {
+  const {loading, data: input, setData: setInput, fetchApi} = useFetchApi({
+    url: '/settings',
+    defaultData: defaultSettings
+  });
+
+  const handleChangeInput = (key, value) => {
+    setInput(prev => ({...prev, [key]: value}));
+  };
+
   const [selected, setSelected] = useState(0);
 
   const handleTabChange = useCallback(selectedTabIndex => setSelected(selectedTabIndex), []);
@@ -25,9 +37,9 @@ export default function Settings() {
     }
   ];
 
-  const renderDisplaySettings = () => <DisplayComponent />;
+  const renderDisplaySettings = () => <DisplayComponent data={input} action={handleChangeInput} />;
 
-  const renderTriggerSettings = () => <TriggerComponent />;
+  const renderTriggerSettings = () => <TriggerComponent data={input} action={handleChangeInput} />;
 
   const renderTabContent = () => {
     switch (selected) {
