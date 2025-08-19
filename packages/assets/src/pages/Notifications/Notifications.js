@@ -6,13 +6,6 @@ import NotificationPopup from '../../components/NotificationPopup/NotificationPo
 export default function Notifications() {
   const {data: notifications, loading} = useFetchApi({url: '/samples'});
 
-  const sortOptions = [
-    {label: 'Oldest to Newest', value: 'order asc'},
-    {label: 'Newest to Oldest', value: 'order desc'}
-  ];
-
-  const [sortedSelected, setSortedSelected] = useState(['order asc']);
-
   const {selectedResources, handleSelectionChange} = useIndexResourceState(notifications);
 
   return (

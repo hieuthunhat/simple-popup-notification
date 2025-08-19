@@ -28,7 +28,7 @@ export default function Settings() {
     if (!result) {
       throw new Error('No update fetch');
     }
-    const defaultSettings = {...defaultSettings, ...input};
+    defaultSettings = {...defaultSettings, ...input};
     console.log('settings updated: ', defaultSettings);
 
     console.log(result);
@@ -54,19 +54,18 @@ export default function Settings() {
     setInput(prev => ({...prev, [key]: value}));
   };
 
-  // React component là 1 function + jsx element
   const tabs = [
     {
       id: 'display-settings',
       content: 'Display',
       panelID: 'display-settings-content',
-      body: DisplayComponent({data: input, action: handleChangeInput})
+      body: DisplayComponent({data: input, action: handleChangeInput, loading: loading})
     },
     {
       id: 'trigger-settings',
       content: 'Trigger',
       panelID: 'trigger-settings-content',
-      body: <TriggerComponent data={input} action={handleChangeInput} />
+      body: <TriggerComponent data={input} action={handleChangeInput} loading={loading} />
     }
   ];
 

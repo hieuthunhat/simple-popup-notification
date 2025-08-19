@@ -1,9 +1,43 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import {Box, Card, Checkbox, InlineStack, RangeSlider, Text} from '@shopify/polaris';
+import {
+  Box,
+  Card,
+  Checkbox,
+  InlineStack,
+  RangeSlider,
+  Text,
+  SkeletonBodyText,
+  SkeletonDisplayText
+} from '@shopify/polaris';
 import DesktopPositionInput from '../DesktopPositionInput/DesktopPositionInput';
 
-const DisplayComponent = ({data, action}) => {
+const DisplayComponent = ({data, action, loading}) => {
+  if (loading) {
+    return (
+      <>
+        <Card title="Appearance" sectioned>
+          <SkeletonDisplayText size="small" />
+
+          <Box paddingBlockStart="200">
+            <DesktopPositionInput />
+            <SkeletonBodyText lines={4} />
+          </Box>
+        </Card>
+        <Card title="Timing" sectioned>
+          <InlineStack gap="400">
+            <Box style={{flex: 1}}>
+              <SkeletonBodyText lines={3} />
+            </Box>
+            <Box style={{flex: 1}}>
+              <SkeletonBodyText lines={3} />
+            </Box>
+          </InlineStack>
+        </Card>
+      </>
+    );
+  }
+
   return (
     <>
       <Card title="Appearance">
