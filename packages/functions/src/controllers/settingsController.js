@@ -1,15 +1,16 @@
-const {getAllSettings} = require('../repositories/settingsRepository');
-const {getCurrentShopData} = require('../helpers/auth');
+const {getAllSettings, updateAllSettings} = require('../repositories/settingsRepository');
+const {getCurrentUserInstance} = require('../helpers/auth');
 
 const getSettings = async ctx => {
   try {
-    const shopData = getCurrentShopData(ctx);
-    if (!shopData) {
+    const {shopID} = getCurrentUserInstance(ctx);
+
+    if (!shopID) {
       ctx.status = 403;
       ctx.body = {data: [], shopData: {}, success: false};
       return;
     }
-    const data = await getAllSettings(shopData.id);
+    const data = await getAllSettings(shopID);
     console.log(data);
     if (!data) {
       ctx.status = 404;
@@ -21,4 +22,28 @@ const getSettings = async ctx => {
   } catch (error) {}
 };
 
-module.exports = {getSettings};
+const updateSettings = async ctx => {
+  try {
+    const {shopID} = await getCurrentUserInstance(ctx);
+    const data = ctx.req.body;
+
+    if (!shopID) {
+      ctx.status = 403;
+      ctx.body = {data: [], shopData: {}, success: false};
+      return;
+    }
+    const results = await updateAllSettings({id: shopID, settingsData: data});
+    if (!results) {
+      ctx.status = 404;
+      ctx.body = {data: [], shopData: {}, success: false};
+      return;
+    }
+
+    ctx.status = 200;
+    ctx.body = {success: true};
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+module.exports = {getSettings, updateSettings};
