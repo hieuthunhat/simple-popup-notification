@@ -48,7 +48,6 @@ export default function useFetchApi({
           }
           return Array.isArray(newData) ? [...prev, ...newData] : {...prev, ...newData};
         });
-        console.log('in fetchapi', data);
       }
     } catch (e) {
       handleError(e);

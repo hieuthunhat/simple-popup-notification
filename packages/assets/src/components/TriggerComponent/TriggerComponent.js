@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import {Box, Layout, LegacyCard, Select, TextField} from '@shopify/polaris';
 import React from 'react';
+import {BlockStack, Card, Layout, Select, TextField} from '@shopify/polaris';
 
 const TriggerComponent = ({data, action}) => {
   const options = [
@@ -8,10 +8,10 @@ const TriggerComponent = ({data, action}) => {
     {label: 'Specific pages', value: 'specific'}
   ];
   return (
-    <Box padding="400">
-      <Layout>
-        <Layout.Section>
-          <LegacyCard sectioned>
+    <Layout>
+      <Layout.Section>
+        <Card>
+          <BlockStack gap="600">
             <Select
               label="PAGES RESTRICTION"
               options={options}
@@ -32,10 +32,10 @@ const TriggerComponent = ({data, action}) => {
               multiline={5}
               onChange={value => action('excludedUrls', value)}
             />
-          </LegacyCard>
-        </Layout.Section>
-      </Layout>
-    </Box>
+          </BlockStack>
+        </Card>
+      </Layout.Section>
+    </Layout>
   );
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './DesktopPositionInput.scss';
-import {Labelled, LegacyStack, Text} from '@shopify/polaris';
+import {InlineStack, Labelled, Text} from '@shopify/polaris';
 
 const defaultOptions = [
   {label: 'Bottom left', value: 'bottom-left'},
@@ -13,7 +13,7 @@ const defaultOptions = [
 const DesktopPositionInput = ({label, value, onChange, helpText, options = defaultOptions}) => {
   return (
     <Labelled label={label}>
-      <LegacyStack>
+      <InlineStack align="space-between">
         {options.map((option, key) => (
           <div
             key={key}
@@ -27,7 +27,7 @@ const DesktopPositionInput = ({label, value, onChange, helpText, options = defau
             ></div>
           </div>
         ))}
-      </LegacyStack>
+      </InlineStack>
       <Text variant="bodyLg" as="p" tone={'subdued'}>
         {helpText}
       </Text>

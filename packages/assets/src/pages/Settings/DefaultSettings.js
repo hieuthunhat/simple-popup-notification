@@ -3,11 +3,10 @@ export const defaultSettings = {
   displayDuration: 5,
   excludedUrls: '',
   firstDelay: 10,
-  hideTimeAgo: true,
+  hideTimeAgo: false,
   includedUrls: '',
   maxPopsDisplay: 20,
   popsInterval: 2,
   position: 'bottom-left',
-  shopId: '',
-  truncateProductName: true
+  truncateProductName: false
 };
