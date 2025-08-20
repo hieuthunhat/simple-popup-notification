@@ -1,4 +1,4 @@
-const {getAllSettings, updateAllSettings} = require('../repositories/settingsRepository');
+import * as settingsRepository from '../repositories/settingsRepository';
 const {getCurrentUserInstance} = require('../helpers/auth');
 
 const getSettings = async ctx => {
@@ -10,7 +10,7 @@ const getSettings = async ctx => {
       ctx.body = {data: [], shopData: {}, success: false};
       return;
     }
-    const data = await getAllSettings(shopID);
+    const data = await settingsRepository.getAllSettings(shopID);
     console.log(data);
     if (!data) {
       ctx.status = 404;
@@ -24,7 +24,7 @@ const getSettings = async ctx => {
 
 const updateSettings = async ctx => {
   try {
-    const {shopID} = await getCurrentUserInstance(ctx);
+    const {shopID} = await settingsRepository.getCurrentUserInstance(ctx);
     const data = ctx.req.body;
 
     if (!shopID) {

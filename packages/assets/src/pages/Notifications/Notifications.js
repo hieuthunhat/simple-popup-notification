@@ -1,43 +1,42 @@
 import React, {useState} from 'react';
-import {Card, IndexTable, Layout, Page, useIndexResourceState} from '@shopify/polaris';
-import useFetchApi from '@assets/hooks/api/useFetchApi';
-import NotificationPopup from '../../components/NotificationPopup/NotificationPopup';
+import {Card, Layout, Page, ResourceItem, ResourceList} from '@shopify/polaris';
+
+import usePaginate from '../../hooks/api/usePaginate';
+import NotificationContainer from '../../components/NotificationContainer/NotificationContainer';
 
 export default function Notifications() {
-  const {data: notifications, loading} = useFetchApi({url: '/samples'});
-
-  const {selectedResources, handleSelectionChange} = useIndexResourceState(notifications);
-
+  const {data: notifications, loading, pageInfo, prevPage, nextPage, count} = usePaginate({
+    url: '/notifications',
+    defaultLimit: 5,
+    initQueries: {hasCount: true}
+  });
+  const [selectedItems, setSelectedItems] = useState([]);
+  const resourceName = {
+    singular: 'notification',
+    plural: 'notifications'
+  };
   return (
     <Page title="Notifications" subtitle="List of sales notifcation from Shopify">
       <Layout>
         <Layout.Section>
           <Card padding="0">
-            <IndexTable
-              resourceName={{singular: 'notifications', plural: 'notifications'}}
-              itemCount={notifications.length}
-              selectedItemsCount={selectedResources.length}
-              onSelectionChange={handleSelectionChange}
-              headings={[{title: 'Title'}]}
-              loading={loading}
+            <ResourceList
+              items={notifications}
+              resourceName={resourceName}
+              renderItem={item => <NotificationContainer item={item} />}
               pagination={{
-                hasNext: true,
-                onNext: () => {}
+                hasNext: pageInfo.hasNext,
+                hasPrevious: pageInfo.hasPre,
+                onNext: nextPage,
+                onPrevious: prevPage
               }}
-            >
-              {notifications.map(({id, title}, index) => (
-                <IndexTable.Row
-                  id={id}
-                  key={id}
-                  position={index}
-                  selected={selectedResources.includes(id)}
-                >
-                  <IndexTable.Cell>
-                    <NotificationPopup />
-                  </IndexTable.Cell>
-                </IndexTable.Row>
-              ))}
-            </IndexTable>
+              loading={loading}
+              selectable
+              totalItemsCount={count || notifications.length}
+              showHeader={true}
+              selectedItems={selectedItems}
+              onSelectionChange={setSelectedItems}
+            ></ResourceList>
           </Card>
         </Layout.Section>
       </Layout>
