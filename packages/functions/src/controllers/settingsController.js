@@ -24,15 +24,17 @@ const getSettings = async ctx => {
 
 const updateSettings = async ctx => {
   try {
-    const {shopID} = await settingsRepository.getCurrentUserInstance(ctx);
+    const {shopID} = getCurrentUserInstance(ctx);
     const data = ctx.req.body;
+    console.log('data put', data);
+    
 
     if (!shopID) {
       ctx.status = 403;
       ctx.body = {data: [], shopData: {}, success: false};
       return;
     }
-    const results = await updateAllSettings({id: shopID, settingsData: data});
+    const results = await settingsRepository.updateAllSettings({id: shopID, settingsData: data});
     if (!results) {
       ctx.status = 404;
       ctx.body = {data: [], shopData: {}, success: false};

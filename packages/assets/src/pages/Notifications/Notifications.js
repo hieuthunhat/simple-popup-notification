@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Card, Layout, Page, ResourceItem, ResourceList} from '@shopify/polaris';
+import {Card, Layout, Page, ResourceList} from '@shopify/polaris';
 
 import usePaginate from '../../hooks/api/usePaginate';
 import NotificationContainer from '../../components/NotificationContainer/NotificationContainer';
