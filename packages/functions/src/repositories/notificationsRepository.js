@@ -4,26 +4,18 @@ const {paginateQuery} = require('./helper');
 const firestore = new Firestore();
 const collection = firestore.collection('notifications');
 
-const getPaginated = async ({
-  shopDomain,
-  page,
-  limit,
-  sort,
-  searchKey,
-  after,
-  before,
-  hasCount
-}) => {
+const getPaginated = async ({shopDomain, page, limit, sort, after, before, hasCount}) => {
   try {
+    const requestOrderBy = sort.split(':');
+
     const queriedRef = collection
       .where('shopDomain', '==', shopDomain)
-      .orderBy('timestamp', 'desc');
+      .orderBy(requestOrderBy[0], requestOrderBy[1]);
     const result = await paginateQuery({
       queriedRef,
       collection,
       query: {page, limit, after, before, hasCount}
     });
-    console.log('resut', result);
 
     return result;
   } catch (error) {
