@@ -8,6 +8,8 @@ import createErrorHandler from '@functions/middleware/errorHandler';
 import firebase from 'firebase-admin';
 import appConfig from '@functions/config/app';
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
+import {syncOrdersGraphQL} from '../services/getSyncOrders';
+import {Firestore} from '@google-cloud/firestore';
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp();
@@ -51,7 +53,44 @@ app.use(
         success: true
       });
     },
-    optionalScopes: shopifyOptionalScopes
+    optionalScopes: shopifyOptionalScopes,
+    afterInstall: async ctx => {
+      const shop = ctx.state.shopify.shop;
+      const accessToken = ctx.state.shopify.accessToken;
+
+      await syncOrdersGraphQL({
+        shopDomain: shop,
+        accessToken: accessToken
+      });
+    },
+    afterUninstall: async () => {
+      const firestore = new Firestore();
+      const collectionRef = firestore.collection('notifications');
+      const batchSize = 100;
+
+      try {
+        const deleteCollection = async () => {
+          const snapshot = await collectionRef.limit(batchSize).get();
+
+          if (snapshot.empty) {
+            console.log('All documents deleted.');
+            return;
+          }
+
+          const batch = firestore.batch();
+          snapshot.docs.forEach(doc => batch.delete(doc.ref));
+
+          await batch.commit();
+
+          setImmediate(deleteCollection);
+        };
+
+        await deleteCollection();
+        console.log('Collection notifications deleted completely.');
+      } catch (err) {
+        console.error('Error deleting collection:', err);
+      }
+    }
   }).routes()
 );
 
