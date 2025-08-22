@@ -2,14 +2,14 @@ import {prepareShopData} from '@avada/core';
 import shopifyConfig from '../config/shopify';
 import Shopify from 'shopify-api-node';
 
-export const API_VERSION = '2024-04';
+export const API_VERSION = '2025-07';
 
 /**
  * Create Shopify instance with the latest API version and auto limit enabled
  *
  * @param {Shop} shopData
  * @param {string} apiVersion
- * @return {Shopify}
+ * @return {Shopify} return a Shopify Object
  */
 export function initShopify(shopData, apiVersion = API_VERSION) {
   const shopParsedData = prepareShopData(shopData.id, shopData, shopifyConfig.accessTokenKey);
