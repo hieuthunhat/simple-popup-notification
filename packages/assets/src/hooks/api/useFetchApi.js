@@ -63,6 +63,10 @@ export default function useFetchApi({
     }
   }, []);
 
+  const handleChangeInput = (key, value) => {
+    setData(prev => ({...prev, [key]: value}));
+  };
+
   return {
     fetchApi,
     data,
@@ -74,6 +78,7 @@ export default function useFetchApi({
     setTotal,
     loading,
     fetched,
-    setFetched
+    setFetched,
+    handleChangeInput
   };
 }

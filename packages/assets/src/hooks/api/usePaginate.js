@@ -2,6 +2,7 @@ import {useState} from 'react';
 import useFetchApi from '@assets/hooks/api/useFetchApi';
 
 /**
+ * A Custom Hook for pagination
  * @param {string} url
  * @param defaultData
  * @param {boolean} initLoad
@@ -20,7 +21,7 @@ export default function usePaginate({
   keepPreviousData = false,
   presentData = null,
   defaultLimit = 20,
-  defaultSort = 'createdAt:asc',
+  defaultSort = 'timestamp:asc',
   searchKey = 'searchKey',
   initQueries = {}
 }) {
