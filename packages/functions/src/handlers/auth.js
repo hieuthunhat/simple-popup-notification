@@ -1,6 +1,6 @@
 import App from 'koa';
 import 'isomorphic-fetch';
-import {contentSecurityPolicy, shopifyAuth} from '@avada/core';
+import {contentSecurityPolicy, getShopByShopifyDomain, shopifyAuth} from '@avada/core';
 import shopifyConfig from '@functions/config/shopify';
 import render from 'koa-ejs';
 import path from 'path';
@@ -8,8 +8,7 @@ import createErrorHandler from '@functions/middleware/errorHandler';
 import firebase from 'firebase-admin';
 import appConfig from '@functions/config/app';
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
-import {syncOrdersGraphQL} from '../services/getSyncOrders';
-import {Firestore} from '@google-cloud/firestore';
+import * as afterInstallService from '../services/afterInstallService';
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp();
@@ -55,41 +54,24 @@ app.use(
     },
     optionalScopes: shopifyOptionalScopes,
     afterInstall: async ctx => {
-      const shop = ctx.state.shopify.shop;
+      // Dùng promise.all để thực hiện các tác vụ: sync 30 products, set default settings, đki scriptag, đki webhook (cloudfared sẵn trong runtimeconfig.json)
+      const shopifyDomain = ctx.state.shopify.shop;
       const accessToken = ctx.state.shopify.accessToken;
+      const {id} = await getShopByShopifyDomain(shopifyDomain, accessToken);
 
-      await syncOrdersGraphQL({
-        shopDomain: shop,
-        accessToken: accessToken
-      });
-    },
-    afterUninstall: async () => {
-      const firestore = new Firestore();
-      const collectionRef = firestore.collection('notifications');
-      const batchSize = 100;
-
-      try {
-        const deleteCollection = async () => {
-          const snapshot = await collectionRef.limit(batchSize).get();
-
-          if (snapshot.empty) {
-            console.log('All documents deleted.');
-            return;
-          }
-
-          const batch = firestore.batch();
-          snapshot.docs.forEach(doc => batch.delete(doc.ref));
-
-          await batch.commit();
-
-          setImmediate(deleteCollection);
-        };
-
-        await deleteCollection();
-        console.log('Collection notifications deleted completely.');
-      } catch (err) {
-        console.error('Error deleting collection:', err);
-      }
+      // Promise.all cả 4 tác vụ cùng lúc
+      await Promise.all([
+        // Tác vụ 1: sync 30 orders
+        afterInstallService.syncOrdersGraphQL({
+          shopDomain: shopifyDomain,
+          accessToken: accessToken,
+          orders: 30
+        }),
+        // Tác vụ 2: cài default settings cho shop
+        afterInstallService.createDefaultSettings({shopId: id})
+        // Tác vụ 3: đăng kí webhook
+        // Tác vụ 4: đăng kí script tag
+      ]);
     }
   }).routes()
 );
