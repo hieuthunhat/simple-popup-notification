@@ -11,7 +11,8 @@ export default function apiRouter(isEmbed = false) {
   router.get('/samples', sampleController.exampleAction);
   router.get('/shops', shopController.getUserShops);
 
-  router.get('/notifications', notificationsController.getAllNotifications);
+  router.get('/notifications', notificationsController.getNotifications);
+  router.delete('/notifications', notificationsController.deleteNotifications);
   router.get('/settings', settingsController.getSettings);
   router.put('/settings', settingsController.updateSettings);
 
