@@ -15,7 +15,7 @@ const getSettings = async ctx => {
       ctx.body = {data: [], shopData: {}, success: false};
       return;
     }
-    const data = await settingsRepository.getAll(shopID);
+    const data = await settingsRepository.getOne(shopID);
     console.log(data);
     if (!data) {
       ctx.status = 404;
@@ -45,7 +45,7 @@ const updateSettings = async ctx => {
       ctx.body = {data: [], shopData: {}, success: false};
       return;
     }
-    const results = await settingsRepository.updateAll({id: shopID, settingsData: data});
+    const results = await settingsRepository.updateOne({id: shopID, settingsData: data});
     if (!results) {
       ctx.status = 404;
       ctx.body = {data: [], shopData: {}, success: false};

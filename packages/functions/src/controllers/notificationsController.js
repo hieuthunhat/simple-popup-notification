@@ -5,7 +5,7 @@ import * as notificationsRepository from '../repositories/notificationsRepositor
  * Controller to get all notifications from Repository
  * @param {*} ctx
  */
-const getAllNotifications = async ctx => {
+const getNotifications = async ctx => {
   try {
     const shopData = getCurrentShopData(ctx);
 
@@ -31,4 +31,19 @@ const getAllNotifications = async ctx => {
   }
 };
 
-module.exports = {getAllNotifications};
+const deleteNotifications = async ctx => {
+  try {
+    console.log('body', ctx.req.body);
+    const notificationsList = ctx.req.body;
+    for (const notifcationId of notificationsList) {
+      await notificationsRepository.deleteOne({id: notifcationId});
+    }
+    ctx.status = 200;
+    ctx.body = {success: true};
+  } catch (error) {
+    ctx.status = 500;
+    ctx.body = {success: false};
+  }
+};
+
+module.exports = {getNotifications, deleteNotifications};
