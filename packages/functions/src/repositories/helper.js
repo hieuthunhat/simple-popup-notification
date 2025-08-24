@@ -31,7 +31,6 @@ export async function paginateQuery({
   defaultLimit = query.limit,
   pickedFields = []
 }) {
-  console.log('qur', query);
   const limit = parseInt(defaultLimit || '20');
   let total;
   let totalPage;
