@@ -8,7 +8,7 @@ const NotificationPopup = ({
   city = 'New York',
   country = 'United States',
   productName = 'Puffer Jacket With Hidden Hood',
-  timestamp = 'a day ago',
+  timestamp,
   productImage = 'http://paris.mageplaza.com/images/shop/single/big-1.jpg'
 }) => {
   return (
@@ -28,7 +28,7 @@ const NotificationPopup = ({
               </div>
               <div className={'Avada-SP__Subtitle'}>purchased {productName}</div>
               <div className={'Avada-SP__Footer'}>
-                {moment(timestamp).fromNow()}{' '}
+                {timestamp ? moment(timestamp).fromNow() : 'a day ago'}{' '}
                 <span className="uni-blue">
                   <i className="fa fa-check" aria-hidden="true" /> by Avada
                 </span>
