@@ -1,5 +1,5 @@
-const {Firestore, Timestamp, FieldValue} = require('@google-cloud/firestore');
-const {paginateQuery} = require('./helper');
+import {Firestore, Timestamp, FieldValue} from '@google-cloud/firestore';
+import {paginateQuery} from './helper.js';
 
 const firestore = new Firestore();
 const collection = firestore.collection('notifications');
@@ -18,7 +18,7 @@ const collection = firestore.collection('notifications');
  * @param {*} param0.hasCount
  * @returns {unknown}
  */
-const getPaginated = async ({shopDomain, page, limit, sort, after, before, hasCount}) => {
+export const getPaginated = async ({shopDomain, page, limit, sort, after, before, hasCount}) => {
   try {
     const requestOrderBy = sort.split(':');
 
@@ -39,10 +39,39 @@ const getPaginated = async ({shopDomain, page, limit, sort, after, before, hasCo
 };
 
 /**
+ * Description placeholder
+ *
+ * @async
+ * @param {*} id
+ * @returns {unknown}
+ */
+export const getOne = async id => {
+  try {
+    const snapshot = await collection
+      .where('productId', '==', id)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      console.log('No matching document.');
+      return null;
+    }
+
+    console.log('found 1');
+
+    const doc = snapshot.docs[0];
+    return {id: doc.id, ...doc.data()};
+  } catch (error) {
+    console.error('Error when getting notification document:', error);
+    return null;
+  }
+};
+
+/**
  * Create a document on a Firestore collection
  * @param {*} param0
  */
-const createOne = async ({
+export const createOne = async ({
   shopDomain,
   firstName,
   city = '',
@@ -67,14 +96,14 @@ const createOne = async ({
     });
 
     console.log(`Notification Document created with ID: ${docRef.id}`);
-    return {success: true, id: docRef.id};
+    return docRef.id;
   } catch (error) {
     console.error('Error creating document:', error);
-    return {success: false, error: error.message};
+    return error;
   }
 };
 
-const deleteOne = async ({id}) => {
+export const deleteOne = async ({id}) => {
   if (!id) {
     console.error('Document ID is required');
     return;
@@ -88,7 +117,7 @@ const deleteOne = async ({id}) => {
 };
 
 // Bổ sung xoá theo shopId hoặc shopDomain
-const dropCollection = async ({batchSize = 100}) => {
+export const dropCollection = async ({batchSize = 100}) => {
   try {
     const deleteCollection = async () => {
       const snapshot = await collection.limit(batchSize).get();
@@ -112,5 +141,3 @@ const dropCollection = async ({batchSize = 100}) => {
     console.error('Error deleting collection:', err);
   }
 };
-
-module.exports = {getPaginated, createOne, deleteOne, dropCollection};
