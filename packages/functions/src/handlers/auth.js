@@ -8,7 +8,7 @@ import createErrorHandler from '@functions/middleware/errorHandler';
 import firebase from 'firebase-admin';
 import appConfig from '@functions/config/app';
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
-import * as afterInstallService from '../services/afterInstallService';
+import * as shopifyService from '../services/shopifyService';
 // import * as afterUninstallService from '../services/afterUninstallService';
 
 if (firebase.apps.length === 0) {
@@ -55,35 +55,22 @@ app.use(
     },
     optionalScopes: shopifyOptionalScopes,
     afterInstall: async ctx => {
-      // Dùng promise.all để thực hiện các tác vụ: sync 30 products, set default settings, đki scriptag, đki webhook (cloudfared sẵn trong runtimeconfig.json)
       const shopifyDomain = ctx.state.shopify.shop;
       const accessToken = ctx.state.shopify.accessToken;
 
       const shopData = await getShopByShopifyDomain(shopifyDomain, accessToken);
 
-      // Promise.all cả 4 tác vụ cùng lúc
       await Promise.all([
-        // Tác vụ 1: sync 30 orders
-        afterInstallService.syncOrdersGraphQL({
+        shopifyService.syncOrdersGraphQL({
           shopDomain: shopifyDomain,
           accessToken: accessToken,
           orders: 30
         }),
-        // Tác vụ 2: cài default settings cho shop
-        afterInstallService.createDefaultSettings({shopId: shopData.id}),
-        // Tác vụ 3: đăng kí webhook
-        afterInstallService.registerWebhook(shopData)
-        // Tác vụ 4: đăng kí script tag
+        shopifyService.createDefaultSettings({shopId: shopData.id, shopDomain: shopifyDomain}),
+        shopifyService.registerWebhook({shopifyDomain, accessToken}),
+        shopifyService.registerScriptTag({shopifyDomain, accessToken})
       ]);
     }
-    // ,
-    // afterUninstall: async ctx => {
-    //   await Promise.all([
-    //     // Bổ sung xoá dựa trên shop id và shop domain
-    //     afterUninstallService.removeDataNotifications(),
-    //     afterUninstallService.removeDataSettings()
-    //   ]);
-    // }
   }).routes()
 );
 
