@@ -4,6 +4,7 @@ import apiSaHandler from './handlers/apiSa';
 import authHandler from './handlers/auth';
 import authSaHandler from './handlers/authSa';
 import webhookHandler from './handlers/webhook';
+import clientApiHandler from './handlers/clientApi';
 
 export const api = functions.https.onRequest(apiHandler.callback());
 export const apiSa = functions.https.onRequest(apiSaHandler.callback());
@@ -11,3 +12,4 @@ export const apiSa = functions.https.onRequest(apiSaHandler.callback());
 export const auth = functions.https.onRequest(authHandler.callback());
 export const authSa = functions.https.onRequest(authSaHandler.callback());
 export const webhook = functions.https.onRequest(webhookHandler.callback());
+export const clientApi = functions.https.onRequest(clientApiHandler.callback());
