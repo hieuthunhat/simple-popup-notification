@@ -72,7 +72,7 @@ if (!isProduction && shopifyApiKey) {
       fs.writeFileSync(runtimeFile, JSON.stringify(configData, null, 4));
     });
 
-    updateThemeAppExtFile('../../extensions/theme-extension/assets/avada-embed.js');
+    updateThemeAppExtFile('../../extensions/sale-popup-notification/assets/managers/ApiManager.js');
 
     updateEnvFile('.env.development', {
       VITE_SHOPIFY_API_KEY: shopifyApiKey
@@ -89,7 +89,7 @@ if (!isProduction && shopifyApiKey) {
 function updateThemeAppExtFile(file) {
   const fileContent = fs.readFileSync(file, 'utf8');
   const regex = /const BASE_URL\s*=\s*(['"`])(.*?)\1/;
-  const url = `${process.env.HOST}/scripttag`;
+  const url = `${process.env.HOST}`;
   const updatedContent = fileContent.replace(regex, `const BASE_URL = '${url}'`);
   // write everything back to the file system
   fs.writeFileSync(file, updatedContent);
@@ -123,7 +123,8 @@ const proxyConfig = {
   '^/auth(/|(\\?.*)?$)': proxyOptions,
   '^/apiSa(/|(\\?.*)?$)': proxyOptions,
   '^/scripttag(/|(\\?.*)?$)': proxyOptions,
-  '^/webhook(/|(\\?.*)?$)': proxyOptions
+  '^/webhook(/|(\\?.*)?$)': proxyOptions,
+  '^/clientApi(/|(\\?.*)?$)': proxyOptions
 };
 
 /** @type {ServerOptions} */
