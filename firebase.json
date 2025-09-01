@@ -58,6 +58,14 @@
         "function": "authSa"
       },
       {
+        "source": "/webhook/**",
+        "function": "webhook"
+      },
+      {
+        "source": "/clientApi/**",
+        "function": "clientApi"
+      },
+      {
         "source": "/embed/**",
         "destination": "/embed.html"
       },
