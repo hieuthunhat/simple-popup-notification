@@ -53,7 +53,7 @@ export default function AppNavigation() {
   };
 
   return (
-    <Navigation location="">
+    <Navigation location={pathname}>
       {!isEmbeddedApp && (
         <Navigation.Section
           items={[

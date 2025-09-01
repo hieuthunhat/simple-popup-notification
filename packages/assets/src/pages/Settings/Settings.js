@@ -58,7 +58,13 @@ export default function Settings() {
     >
       <Layout>
         <Layout.Section variant="oneThird">
-          <Box>{loading ? <SkeletonBodyText lines={4} /> : <NotificationPopup />}</Box>
+          <Box>
+            {loading ? (
+              <SkeletonBodyText lines={4} />
+            ) : (
+              <NotificationPopup timestamp={input.hideTimeAgo ? '' : 'a day ago'} />
+            )}
+          </Box>
         </Layout.Section>
         <Layout.Section>
           <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>

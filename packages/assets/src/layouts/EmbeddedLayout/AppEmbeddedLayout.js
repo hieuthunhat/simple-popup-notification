@@ -1,9 +1,11 @@
 import React from 'react';
 import {Frame, Loading, Toast} from '@shopify/polaris';
 import PropTypes from 'prop-types';
+// import {useLocation} from 'react-router-dom';
 import {useStore} from '@assets/reducers/storeReducer';
 import {closeToast} from '@assets/actions/storeActions';
 // import {HomeIcon, NotificationFilledIcon, SettingsFilledIcon} from '@shopify/polaris-icons';
+// import {routePrefix} from '@assets/config/app';
 
 /**
  *
@@ -14,25 +16,29 @@ import {closeToast} from '@assets/actions/storeActions';
 function AppEmbeddedLayout({children}) {
   const {state, dispatch} = useStore();
   const {loading, toast} = state;
+  // const location = useLocation();
 
   // const navigation = (
-  //   <Navigation location="/">
+  //   <Navigation location={location.pathname}>
   //     <Navigation.Section
   //       items={[
   //         {
-  //           url: '#',
+  //           url: routePrefix + '/',
   //           label: 'Home',
-  //           icon: HomeIcon
+  //           icon: HomeIcon,
+  //           selected: location.pathname === routePrefix + '/'
   //         },
   //         {
-  //           url: '/notifications',
+  //           url: routePrefix + '/notifications',
   //           label: 'Notifications',
-  //           icon: NotificationFilledIcon
+  //           icon: NotificationFilledIcon,
+  //           selected: location.pathname === routePrefix + '/notifications'
   //         },
   //         {
-  //           url: '/settings',
+  //           url: routePrefix + '/settings',
   //           label: 'Settings',
-  //           icon: SettingsFilledIcon
+  //           icon: SettingsFilledIcon,
+  //           selected: location.pathname === routePrefix + '/settings'
   //         }
   //       ]}
   //     />

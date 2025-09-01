@@ -22,7 +22,8 @@ export default function Notifications() {
   } = usePaginate({
     url: '/notifications',
     defaultLimit: 25,
-    initQueries: {hasCount: true}
+    initQueries: {hasCount: true},
+    defaultSort: 'timestamp:desc'
   });
 
   const {deleting, handleDelete} = useDeleteApi({
@@ -30,7 +31,7 @@ export default function Notifications() {
   });
 
   const [selectedItems, setSelectedItems] = useState([]);
-  const [selectedSortValue, setSelectedSortValue] = useState('timestamp:asc');
+  const [selectedSortValue, setSelectedSortValue] = useState('timestamp:desc');
 
   const resourceName = {
     singular: 'notification',
@@ -44,7 +45,6 @@ export default function Notifications() {
   };
 
   const handleDeleteAction = async () => {
-    // Not working as intended
     setData(prevNotifications =>
       prevNotifications.filter(notification => !selectedItems.includes(notification.id))
     );
@@ -81,8 +81,8 @@ export default function Notifications() {
               ]}
               sortValue={selectedSortValue}
               sortOptions={[
-                {label: 'Ascending', value: 'timestamp:asc'},
-                {label: 'Descending', value: 'timestamp:desc'}
+                {label: 'Oldest update', value: 'timestamp:asc'},
+                {label: 'Newest update', value: 'timestamp:desc'}
               ]}
               onSortChange={handleSortChange}
               emptyState={<EmptyListDisplay />}

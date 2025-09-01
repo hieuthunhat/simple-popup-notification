@@ -14,7 +14,7 @@ import {
 import DesktopPositionInput from '../DesktopPositionInput/DesktopPositionInput';
 import NumberDisplayField from '../NumberDisplayField/NumberDisplayField';
 
-const DisplayComponent = ({data, action, loading}) => {
+const DisplayComponent = ({data, action, loading = false}) => {
   if (loading) {
     return (
       <Card>
@@ -84,7 +84,7 @@ const DisplayComponent = ({data, action, loading}) => {
               min={0}
               max={20}
               value={data?.displayDuration}
-              suffix={<NumberDisplayField value={data?.displayDuration} helpText="seconds" />}
+              suffix={<NumberDisplayField value={data?.displayDuration} helpText="second(s)" />}
               onChange={value => action('displayDuration', value)}
               helpText="How long each pop will display on your page."
             />
@@ -95,7 +95,7 @@ const DisplayComponent = ({data, action, loading}) => {
                 min={0}
                 max={20}
                 value={data?.popsInterval}
-                suffix={<NumberDisplayField value={data?.popsInterval} helpText="seconds" />}
+                suffix={<NumberDisplayField value={data?.popsInterval} helpText="second(s)" />}
                 onChange={value => action('popsInterval', value)}
                 helpText="The time interval between two popup notifications."
               />
@@ -106,9 +106,9 @@ const DisplayComponent = ({data, action, loading}) => {
               output
               label="Time before the first pop"
               min={0}
-              max={100}
+              max={20}
               value={data?.firstDelay}
-              suffix={<NumberDisplayField value={data?.firstDelay} helpText="seconds" />}
+              suffix={<NumberDisplayField value={data?.firstDelay} helpText="second(s)" />}
               onChange={value => action('firstDelay', value)}
               helpText="The delay time before the first notification."
             />
@@ -119,7 +119,7 @@ const DisplayComponent = ({data, action, loading}) => {
                 min={0}
                 max={80}
                 value={data?.maxPopsDisplay}
-                suffix={<NumberDisplayField value={data?.maxPopsDisplay} helpText="popups" />}
+                suffix={<NumberDisplayField value={data?.maxPopsDisplay} helpText="popup(s)" />}
                 onChange={value => action('maxPopsDisplay', value)}
                 helpText="The maxinum number of popups are allowed to show after page loading. Maxinum number is 80"
               />
