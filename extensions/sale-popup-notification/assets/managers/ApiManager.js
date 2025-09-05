@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 import makeRequest from '../helpers/api/makeRequest';
-const BASE_URL = 'https://luggage-narrow-capabilities-devices.trycloudflare.com';
+const BASE_URL = 'https://localhost:3001';
 
 export default class ApiManager {
   async getNotifications() {

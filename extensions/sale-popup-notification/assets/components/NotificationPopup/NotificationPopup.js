@@ -3,7 +3,7 @@ import React from 'react';
 import './NoticationPopup.scss';
 
 const NotificationPopup = ({
-  relativeDate,
+  timeAgo,
   position = 'top-left',
   firstName = 'John Doe',
   city = 'New York',
@@ -35,7 +35,7 @@ const NotificationPopup = ({
               </div>
               <div className={'Avada-SP__Subtitle'}>purchased {productName}</div>
               <div className={'Avada-SP__Footer'}>
-                {relativeDate}{' '}
+                {timeAgo}{' '}
                 <span className="uni-blue">
                   <i className="fa fa-check" aria-hidden="true" /> by Avada
                 </span>
