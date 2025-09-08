@@ -42,17 +42,20 @@ export const getOneByDomain = async shopDomain => {
  */
 export const updateOne = async ({id, settingsData}) => {
   const snapshot = await getOneById(id);
-  if (snapshot.empty) {
+
+  if (!snapshot || snapshot.length === 0) {
     return null;
   }
-  const doc = snapshot.docs[0];
-  await doc.ref.set(
+
+  const docId = snapshot[0].id;
+  await collection.doc(docId).set(
     {
       ...settingsData,
       updatedAt: new Date()
     },
     {merge: true}
   );
+
   return {success: true};
 };
 

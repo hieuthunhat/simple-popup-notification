@@ -3,11 +3,11 @@ import React from 'react';
 import './NoticationPopup.scss';
 
 const NotificationPopup = ({
-  timestamp = 'a day ago',
+  timeAgo,
+  productName,
   firstName = 'Someone',
   city = 'Store',
   country = 'Global',
-  productName = 'Unkwown Product',
   productImage = 'http://paris.mageplaza.com/images/shop/single/big-1.jpg'
 }) => {
   return (
@@ -27,7 +27,7 @@ const NotificationPopup = ({
               </div>
               <div className={'Avada-SP__Subtitle'}>purchased {productName}</div>
               <div className={'Avada-SP__Footer'}>
-                {timestamp}{' '}
+                {timeAgo}{' '}
                 <span className="uni-blue">
                   <i className="fa fa-check" aria-hidden="true" /> by Avada
                 </span>

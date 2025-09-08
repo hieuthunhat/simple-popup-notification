@@ -62,7 +62,14 @@ export default function Settings() {
             {loading ? (
               <SkeletonBodyText lines={4} />
             ) : (
-              <NotificationPopup timestamp={input.hideTimeAgo ? '' : 'a day ago'} />
+              <NotificationPopup
+                timeAgo={input.hideTimeAgo ? '' : 'a day ago'}
+                productName={
+                  input.truncateProductName
+                    ? 'Unkwown Product...'
+                    : 'Unkwown Product something is very long here that you may want to truncate'
+                }
+              />
             )}
           </Box>
         </Layout.Section>

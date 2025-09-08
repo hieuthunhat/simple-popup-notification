@@ -39,7 +39,6 @@ export default function Notifications() {
   };
 
   const handleSortChange = value => {
-    console.log(value);
     setSelectedSortValue(value);
     onQueryChange('sort', value, true);
   };
@@ -81,8 +80,8 @@ export default function Notifications() {
               ]}
               sortValue={selectedSortValue}
               sortOptions={[
-                {label: 'Oldest update', value: 'timestamp:asc'},
-                {label: 'Newest update', value: 'timestamp:desc'}
+                {label: 'Newest update', value: 'timestamp:desc'},
+                {label: 'Oldest update', value: 'timestamp:asc'}
               ]}
               onSortChange={handleSortChange}
               emptyState={<EmptyListDisplay />}

@@ -8,6 +8,7 @@ webhookApi.proxy = true;
 webhookApi.use(router.routes());
 webhookApi.use(router.allowedMethods());
 webhookApi.use(verifyRequest());
+// webhookApi.use(verify)
 
 webhookApi.on('error', (error, ctx) => {
   console.error('Webhook error:', error);

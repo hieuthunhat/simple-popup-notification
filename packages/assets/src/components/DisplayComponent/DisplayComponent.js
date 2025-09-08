@@ -81,7 +81,7 @@ const DisplayComponent = ({data, action, loading = false}) => {
             <RangeSlider
               output
               label="Display duration"
-              min={0}
+              min={1}
               max={20}
               value={data?.displayDuration}
               suffix={<NumberDisplayField value={data?.displayDuration} helpText="second(s)" />}
@@ -92,7 +92,7 @@ const DisplayComponent = ({data, action, loading = false}) => {
               <RangeSlider
                 output
                 label="Gap time between two pops"
-                min={0}
+                min={1}
                 max={20}
                 value={data?.popsInterval}
                 suffix={<NumberDisplayField value={data?.popsInterval} helpText="second(s)" />}
@@ -105,7 +105,7 @@ const DisplayComponent = ({data, action, loading = false}) => {
             <RangeSlider
               output
               label="Time before the first pop"
-              min={0}
+              min={1}
               max={20}
               value={data?.firstDelay}
               suffix={<NumberDisplayField value={data?.firstDelay} helpText="second(s)" />}
@@ -116,7 +116,7 @@ const DisplayComponent = ({data, action, loading = false}) => {
               <RangeSlider
                 output
                 label="Maxinum of popups"
-                min={0}
+                min={1}
                 max={80}
                 value={data?.maxPopsDisplay}
                 suffix={<NumberDisplayField value={data?.maxPopsDisplay} helpText="popup(s)" />}

@@ -1,4 +1,4 @@
-# app-name
+# Notification Sale Popup Notification
 
 > Application tag line describe here
 
