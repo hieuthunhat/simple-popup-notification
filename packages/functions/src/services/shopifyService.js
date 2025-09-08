@@ -10,9 +10,9 @@ import {loadGraphQL} from '@functions/helpers/graphql/graphqlHelpers';
 import {prepareNotification} from '../presenters/notificationPresenter';
 import * as settingsRepository from '../repositories/settingsRepository';
 
-export const API_VERSION = '2025-07';
 const {baseUrl} = appConfig;
 const firestore = new Firestore();
+export const API_VERSION = '2025-07';
 const collection = firestore.collection('notifications');
 /**
  * Create Shopify instance with the latest API version and auto limit enabled
@@ -58,6 +58,7 @@ export const syncOrdersGraphQL = async ({shopDomain, accessToken, limit = 30}) =
       collection: collection,
       data: preparedOrders
     });
+    return {success: true};
   } catch (error) {
     throw new Error('sth wrong here');
   }
@@ -78,10 +79,6 @@ export const createDefaultSettings = async ({shopId, shopDomain}) => {
       shopId: shopId,
       shopDomain: shopDomain
     });
-    if (!defaultData) {
-      console.log('Error when creating default settings services');
-      return;
-    }
     return defaultData;
   } catch (e) {
     console.error('Error hrere', e);

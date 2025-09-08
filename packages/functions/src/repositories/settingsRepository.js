@@ -6,11 +6,16 @@ const collection = firestore.collection('settings');
 
 /**
  * Get settings from a specific shop
+ *
  * @param {String} shopId
  * @returns {Array{Object}} return array of documents found from Firestore
  */
 export const getOneById = async shopId => {
-  const docs = await collection.where('shopId', '==', shopId).get();
+  const docs = await collection
+    .where('shopId', '==', shopId)
+    .limit(1)
+    .get();
+
   return docs.docs.map(doc => ({id: doc.id, ...formatDateFields(doc.data())}));
 };
 
@@ -22,7 +27,10 @@ export const getOneById = async shopId => {
  * @returns {Array{Object}} return array of documents found from Firestore
  */
 export const getOneByDomain = async shopDomain => {
-  const docs = await collection.where('shopDomain', '==', shopDomain).get();
+  const docs = await collection
+    .where('shopDomain', '==', shopDomain)
+    .limit(1)
+    .get();
   return docs.docs.map(doc => ({id: doc.id, ...formatDateFields(doc.data())}));
 };
 
@@ -33,10 +41,7 @@ export const getOneByDomain = async shopDomain => {
  * @returns {Object} return a message
  */
 export const updateOne = async ({id, settingsData}) => {
-  const snapshot = await collection
-    .where('shopId', '==', id)
-    .limit(1)
-    .get();
+  const snapshot = await getOneById(id);
   if (snapshot.empty) {
     return null;
   }
@@ -62,13 +67,13 @@ export const updateOne = async ({id, settingsData}) => {
  * @returns {unknown}
  */
 export const createOne = async ({data, shopId, shopDomain}) => {
-  console.log('setting', shopId);
   const snapshot = await getOneById(shopId);
 
-  if (!snapshot.empty) {
-    console.log('get setting', existedOne);
+  if (snapshot.length > 0) {
+    console.log('Exist 1 doc, not creating more');
     return;
   }
+
   const settingsDocRef = await collection.add({...data, shopId: shopId, shopDomain: shopDomain});
   return settingsDocRef.id;
 };
