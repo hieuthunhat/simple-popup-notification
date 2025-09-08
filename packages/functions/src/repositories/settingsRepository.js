@@ -1,5 +1,5 @@
-const {formatDateFields} = require('@avada/firestore-utils');
-const {Firestore} = require('@google-cloud/firestore');
+import {Firestore} from '@google-cloud/firestore';
+import {formatDateFields} from '@avada/firestore-utils';
 
 const firestore = new Firestore();
 const collection = firestore.collection('settings');
@@ -9,13 +9,21 @@ const collection = firestore.collection('settings');
  * @param {String} shopId
  * @returns {Array{Object}} return array of documents found from Firestore
  */
-const getOne = async shopId => {
-  try {
-    const docs = await collection.where('shopId', '==', shopId).get();
-    return docs.docs.map(doc => ({id: doc.id, ...formatDateFields(doc.data())}));
-  } catch (error) {
-    console.error(error);
-  }
+export const getOneById = async shopId => {
+  const docs = await collection.where('shopId', '==', shopId).get();
+  return docs.docs.map(doc => ({id: doc.id, ...formatDateFields(doc.data())}));
+};
+
+/**
+ * Get settings from a specific shop by domain
+ *
+ * @async
+ * @param {*} shopDomain
+ * @returns {Array{Object}} return array of documents found from Firestore
+ */
+export const getOneByDomain = async shopDomain => {
+  const docs = await collection.where('shopDomain', '==', shopDomain).get();
+  return docs.docs.map(doc => ({id: doc.id, ...formatDateFields(doc.data())}));
 };
 
 /**
@@ -24,63 +32,43 @@ const getOne = async shopId => {
  * @param {1} settingsData settings data sent from Controller
  * @returns {Object} return a message
  */
-const updateOne = async ({id, settingsData}) => {
-  try {
-    const snapshot = await collection
-      .where('shopId', '==', id)
-      .limit(1)
-      .get();
-    if (!snapshot.empty) {
-      const doc = snapshot.docs[0];
-      await doc.ref.set(settingsData, {merge: true});
-      return {msg: true};
-    } else {
-      console.log('Cannot find the document');
-      return {msg: true};
-    }
-  } catch (error) {
-    console.error('Error updating settings:', error);
-    return {msg: false};
+export const updateOne = async ({id, settingsData}) => {
+  const snapshot = await collection
+    .where('shopId', '==', id)
+    .limit(1)
+    .get();
+  if (snapshot.empty) {
+    return null;
   }
+  const doc = snapshot.docs[0];
+  await doc.ref.set(
+    {
+      ...settingsData,
+      updatedAt: new Date()
+    },
+    {merge: true}
+  );
+  return {success: true};
 };
 
-const createOne = async ({data, shopId}) => {
-  try {
-    const settingsDocRef = await collection.add({...data, shopId: shopId});
-    if (settingsDocRef.empty) {
-      console.log('No data found');
-    }
-    console.log('Settings Document created with Id', settingsDocRef.id);
-    return settingsDocRef.id;
-  } catch (error) {
-    console.error('Error when creating settings', error);
+/**
+ * Create a new settings document
+ *
+ * @async
+ * @param {{ data: any; shopId: any; shopDomain: any; }} param0
+ * @param {*} param0.data
+ * @param {*} param0.shopId
+ * @param {*} param0.shopDomain
+ * @returns {unknown}
+ */
+export const createOne = async ({data, shopId, shopDomain}) => {
+  console.log('setting', shopId);
+  const snapshot = await getOneById(shopId);
+
+  if (!snapshot.empty) {
+    console.log('get setting', existedOne);
+    return;
   }
+  const settingsDocRef = await collection.add({...data, shopId: shopId, shopDomain: shopDomain});
+  return settingsDocRef.id;
 };
-
-// Bổ sung xoá theo shopId hoặc shopDomain
-const dropCollection = async ({batchSize = 100}) => {
-  try {
-    const deleteCollection = async () => {
-      const snapshot = await collection.limit(batchSize).get();
-
-      if (snapshot.empty) {
-        console.log('All documents deleted.');
-        return;
-      }
-
-      const batch = firestore.batch();
-      snapshot.docs.forEach(doc => batch.delete(doc.ref));
-
-      await batch.commit();
-
-      setImmediate(deleteCollection);
-    };
-
-    await deleteCollection();
-    console.log('Collection settings deleted completely.');
-  } catch (err) {
-    console.error('Error deleting collection:', err);
-  }
-};
-
-module.exports = {getOne, updateOne, createOne, dropCollection};

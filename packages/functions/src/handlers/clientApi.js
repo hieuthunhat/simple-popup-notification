@@ -10,7 +10,7 @@ clientApi.use(router.allowedMethods());
 clientApi.use(router.routes());
 
 clientApi.on('error', (error, ctx) => {
-  console.error('Client API error:', error);
+  console.error('Server: Client API error:', error);
 });
 
 export default clientApi;

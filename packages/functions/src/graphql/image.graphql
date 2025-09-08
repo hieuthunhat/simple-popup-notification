@@ -1,0 +1,13 @@
+query getProductImages($id: ID!) {
+  product(id: $id) {
+    id
+    title
+    images(first: 10) {
+      edges {
+        node {
+          src
+        }
+      }
+    }
+  }
+}

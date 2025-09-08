@@ -12,9 +12,10 @@ const BATCH_SIZE = 500;
  */
 export function prepareDoc({doc, data = {}, keyId = 'id'}) {
   if (doc) {
-    data = typeof doc.data() === 'undefined' ? {} : {...doc.data(), [keyId]: doc.id};
+    data =
+      typeof doc.data() === 'undefined' ? {} : {...formatDateFields(doc.data()), [keyId]: doc.id};
   }
-  return formatDateFields(data);
+  return data;
 }
 
 /**
@@ -78,7 +79,12 @@ export async function paginateQuery({
     }
   }
 
-  const resp = {data, count: docs.size, total, pageInfo: {hasPre, hasNext, totalPage}};
+  const resp = {
+    data,
+    count: docs.size,
+    total,
+    pageInfo: {hasPre, hasNext, totalPage}
+  };
   return query.withDocs ? {...resp, docs} : resp;
 }
 

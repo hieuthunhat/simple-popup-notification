@@ -1,15 +1,19 @@
+import {isEmpty} from '@avada/utils';
+import appConfig from '../config/app';
+import Shopify from 'shopify-api-node';
 import {prepareShopData} from '@avada/core';
 import shopifyConfig from '../config/shopify';
-import Shopify from 'shopify-api-node';
-import {isEmpty} from '@avada/utils';
+import {Firestore} from '@google-cloud/firestore';
+import {batchCreate} from '../repositories/helper';
 import {defaultSettingsData} from '../const/defaultSettings';
-import * as notificationsRepository from '../repositories/notificationsRepository';
+import {loadGraphQL} from '@functions/helpers/graphql/graphqlHelpers';
+import {prepareNotification} from '../presenters/notificationPresenter';
 import * as settingsRepository from '../repositories/settingsRepository';
-import appConfig from '../config/app';
 
 export const API_VERSION = '2025-07';
 const {baseUrl} = appConfig;
-
+const firestore = new Firestore();
+const collection = firestore.collection('notifications');
 /**
  * Create Shopify instance with the latest API version and auto limit enabled
  *
@@ -37,84 +41,25 @@ export function initShopify(shopData, apiVersion = API_VERSION) {
  * @param {*} param0.shopDomain
  * @param {*} param0.accessToken
  */
-export const syncOrdersGraphQL = async ({shopDomain, accessToken, orders = 30}) => {
-  const URL = `https://${shopDomain}/admin/api/${API_VERSION}/graphql.json`;
+export const syncOrdersGraphQL = async ({shopDomain, accessToken, limit = 30}) => {
+  const shopify = new Shopify({
+    accessToken: accessToken,
+    shopName: shopDomain
+  });
 
-  const query = `
-    query {
-      orders(first: ${orders}) {
-        edges {
-          node {
-            id
-            createdAt
-            customer {
-              firstName
-              defaultAddress {
-                city
-                country
-              }
-            }
-            lineItems(first: 1) {
-              edges {
-                node {
-                  title
-                  product {
-                    images(first: 1) {
-                      edges {
-                        node {
-                          url
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      shop {
-        myshopifyDomain
-      }
-    }
-  `;
+  const query = loadGraphQL('/orders.graphql');
+  const ordersData = await shopify.graphql(query, {limit});
+  const orders = ordersData?.orders?.edges;
+  const preparedOrders = prepareNotification({data: orders, shopDomain: shopDomain});
 
   try {
-    const response = await fetch(URL, {
-      method: 'POST',
-      headers: {
-        'X-Shopify-Access-Token': accessToken,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({query})
+    await batchCreate({
+      firestore: firestore,
+      collection: collection,
+      data: preparedOrders
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch orders: ${response.status} ${response.statusText}`);
-    }
-
-    const ordersData = await response.json();
-    const ordersList = ordersData.data.orders.edges;
-
-    await Promise.all(
-      ordersList.map(order => {
-        const customer = order?.node?.customer;
-        const lineItem = order?.node?.lineItems?.edges?.[0]?.node;
-
-        return notificationsRepository.createOne({
-          shopDomain: ordersData.data.shop?.myshopifyDomain,
-          firstName: customer?.firstName,
-          city: customer?.defaultAddress?.city,
-          country: customer?.defaultAddress?.country,
-          productId: order?.node?.id,
-          productImage: lineItem?.product?.images?.edges?.[0]?.node?.url,
-          productName: lineItem?.title,
-          timestamp: new Date(order?.node?.createdAt)
-        });
-      })
-    );
   } catch (error) {
-    console.error('Error:', error);
+    throw new Error('sth wrong here');
   }
 };
 
@@ -135,10 +80,11 @@ export const createDefaultSettings = async ({shopId, shopDomain}) => {
     });
     if (!defaultData) {
       console.log('Error when creating default settings services');
+      return;
     }
     return defaultData;
-  } catch (error) {
-    console.error('Error hrere', error);
+  } catch (e) {
+    console.error('Error hrere', e);
     return;
   }
 };
@@ -151,8 +97,6 @@ export const createDefaultSettings = async ({shopId, shopDomain}) => {
  * @returns {*}
  */
 export const registerWebhook = async ({shopifyDomain, accessToken}) => {
-  console.log(baseUrl);
-
   try {
     const shopify = new Shopify({
       shopName: shopifyDomain,
@@ -164,11 +108,9 @@ export const registerWebhook = async ({shopifyDomain, accessToken}) => {
     const unusedHooks = currentWebhooks.filter(webhook => !webhook.address.includes(baseUrl));
 
     if (!isEmpty(unusedHooks)) {
-      console.log(`Deleting ${unusedHooks.length} unused webhooks...`);
       await Promise.all(
         unusedHooks.map(async hook => {
           await shopify.webhook.delete(hook.id);
-          console.log(`Deleted webhook ID: ${hook.id}`);
         })
       );
     }
@@ -183,39 +125,53 @@ export const registerWebhook = async ({shopifyDomain, accessToken}) => {
         address: `https://${appConfig.baseUrl}/webhook/order/new`,
         format: 'json'
       });
-      console.log('Webhook created successfully:', createdWebhook);
+      // console.log('Webhook created successfully:', createdWebhook);
       return createdWebhook;
     }
-
-    console.log('Webhook already exists');
-  } catch (error) {
-    console.error('Error registering webhook:', error);
+  } catch (e) {
+    console.error('Error registering webhook:', e);
   }
 };
 
 export const registerScriptTag = async ({shopifyDomain, accessToken}) => {
-  try {
-    const shopify = new Shopify({
-      shopName: shopifyDomain,
-      accessToken
-    });
+  const shopify = new Shopify({
+    shopName: shopifyDomain,
+    accessToken
+  });
 
-    const existingScriptTags = await shopify.scriptTag.list();
-    console.log('Existing script tags:', existingScriptTags);
+  const existingScriptTags = await shopify.scriptTag.list();
 
-    for (const tag of existingScriptTags) {
-      await shopify.scriptTag.delete(tag.id);
-      console.log(`Deleted script tag: ${tag.id} (${tag.src})`);
-    }
-
-    const scriptTag = await shopify.scriptTag.create({
-      event: 'onload',
-      src: 'https://localhost:3001/scripttag/avada-sale-pop.min.js'
-    });
-    console.log('Script tag registered successfully:', scriptTag);
-
-    return scriptTag;
-  } catch (error) {
-    console.error('Error registering script tag:', error);
+  for (const tag of existingScriptTags) {
+    await shopify.scriptTag.delete(tag.id);
   }
+
+  const scriptTag = await shopify.scriptTag.create({
+    event: 'onload',
+    src: 'https://localhost:3001/scripttag/avada-sale-pop.min.js'
+  });
+
+  return scriptTag;
+};
+
+/**
+ * Fetch product images from Shopify GraphQL API
+ *
+ * @async
+ * @param {{ shopName: any; accessToken: any; productId: any; }} param0
+ * @param {*} param0.shopName
+ * @param {*} param0.accessToken
+ * @param {*} param0.productId
+ * @returns {unknown}
+ */
+export const getProductImage = async ({shopName, accessToken, productId}) => {
+  const shopify = new Shopify({shopName: shopName, accessToken: accessToken});
+  const productGid = `gid://shopify/Product/${productId}`;
+  const query = loadGraphQL('/image.graphql');
+  const imageData = await shopify.graphql(query, {id: productGid});
+
+  if (!imageData) {
+    return null;
+  }
+
+  return imageData.data.product;
 };

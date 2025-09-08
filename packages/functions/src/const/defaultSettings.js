@@ -2,10 +2,10 @@ export const defaultSettingsData = {
   allowShow: 'all',
   displayDuration: 5,
   excludedUrls: '',
-  firstDelay: 10,
+  firstDelay: 2,
   hideTimeAgo: false,
   includedUrls: '',
-  maxPopsDisplay: 20,
+  maxPopsDisplay: 30,
   popsInterval: 2,
   position: 'bottom-left',
   truncateProductName: false

@@ -1,6 +1,6 @@
 import App from 'koa';
 import 'isomorphic-fetch';
-import {contentSecurityPolicy, getShopByShopifyDomain, shopifyAuth} from '@avada/core';
+import {contentSecurityPolicy, shopifyAuth} from '@avada/core';
 import shopifyConfig from '@functions/config/shopify';
 import render from 'koa-ejs';
 import path from 'path';
@@ -8,7 +8,7 @@ import createErrorHandler from '@functions/middleware/errorHandler';
 import firebase from 'firebase-admin';
 import appConfig from '@functions/config/app';
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
-import * as shopifyService from '../services/shopifyService';
+import * as afterInstallService from '../services/afterInstallService';
 // import * as afterUninstallService from '../services/afterUninstallService';
 
 if (firebase.apps.length === 0) {
@@ -54,23 +54,7 @@ app.use(
       });
     },
     optionalScopes: shopifyOptionalScopes,
-    afterInstall: async ctx => {
-      const shopifyDomain = ctx.state.shopify.shop;
-      const accessToken = ctx.state.shopify.accessToken;
-
-      const shopData = await getShopByShopifyDomain(shopifyDomain, accessToken);
-
-      await Promise.all([
-        shopifyService.syncOrdersGraphQL({
-          shopDomain: shopifyDomain,
-          accessToken: accessToken,
-          orders: 30
-        }),
-        shopifyService.createDefaultSettings({shopId: shopData.id, shopDomain: shopifyDomain}),
-        shopifyService.registerWebhook({shopifyDomain, accessToken}),
-        shopifyService.registerScriptTag({shopifyDomain, accessToken})
-      ]);
-    }
+    afterInstall: afterInstallService.install
   }).routes()
 );
 

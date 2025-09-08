@@ -1,12 +1,12 @@
+import {getCurrentUserInstance} from '../helpers/auth';
 import * as settingsRepository from '../repositories/settingsRepository';
-const {getCurrentUserInstance} = require('../helpers/auth');
 
 /**
  * Get all settings data from Repository
  * @param {*} ctx
  * @returns
  */
-const getSettings = async ctx => {
+export const getSettings = async ctx => {
   try {
     const {shopID} = getCurrentUserInstance(ctx);
 
@@ -15,15 +15,14 @@ const getSettings = async ctx => {
       ctx.body = {data: [], shopData: {}, success: false};
       return;
     }
-    const data = await settingsRepository.getOne(shopID);
-    console.log(data);
+    const data = await settingsRepository.getOneById(shopID);
     if (!data) {
       ctx.status = 404;
       ctx.body = {data: [], shopData: {}, success: false};
       return;
     }
     ctx.status = 200;
-    ctx.body = {success: true, data: data[0]};
+    return (ctx.body = {success: true, data: data[0]});
   } catch (error) {
     ctx.status = 500;
     ctx.body = {success: false, data: []};
@@ -35,7 +34,7 @@ const getSettings = async ctx => {
  * @param {*} ctx
  * @returns
  */
-const updateSettings = async ctx => {
+export const updateSettings = async ctx => {
   try {
     const {shopID} = getCurrentUserInstance(ctx);
     const data = ctx.req.body;
@@ -53,12 +52,10 @@ const updateSettings = async ctx => {
     }
 
     ctx.status = 200;
-    ctx.body = {success: true};
+    return (ctx.body = {success: true});
   } catch (error) {
     console.error(error);
     ctx.status = 500;
     ctx.body = {success: false, data: []};
   }
 };
-
-module.exports = {getSettings, updateSettings};

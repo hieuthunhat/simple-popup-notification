@@ -1,11 +1,12 @@
-import {Firestore, Timestamp, FieldValue} from '@google-cloud/firestore';
+import {Firestore} from '@google-cloud/firestore';
 import {paginateQuery} from './helper.js';
+import {formatDateFields} from '@avada/firestore-utils';
 
 const firestore = new Firestore();
 const collection = firestore.collection('notifications');
 
 /**
- * Description placeholder
+ * Get all notifications for a specific shop with pagination
  *
  * @async
  * @param {{ shopDomain: any; page: any; limit: any; sort: any; after: any; before: any; hasCount: any; }} param0
@@ -16,26 +17,45 @@ const collection = firestore.collection('notifications');
  * @param {*} param0.after
  * @param {*} param0.before
  * @param {*} param0.hasCount
- * @returns {unknown}
+ * @returns {Array{Object}} return array of documents found from Firestore
  */
 export const getPaginated = async ({shopDomain, page, limit, sort, after, before, hasCount}) => {
-  try {
-    const requestOrderBy = sort.split(':');
+  const requestOrderBy = sort.split(':');
 
-    const queriedRef = collection
-      .where('shopDomain', '==', shopDomain)
-      .orderBy(requestOrderBy[0], requestOrderBy[1]);
-    const result = await paginateQuery({
-      queriedRef,
-      collection,
-      query: {page, limit, after, before, hasCount}
-    });
+  const queriedRef = collection
+    .where('shopDomain', '==', shopDomain)
+    .orderBy(requestOrderBy[0], requestOrderBy[1]);
+  const results = await paginateQuery({
+    queriedRef,
+    collection,
+    query: {page, limit, after, before, hasCount}
+  });
 
-    return result;
-  } catch (error) {
-    console.error('Error getting documents: ', error);
-    throw error;
-  }
+  return results;
+};
+
+/**
+ * Get all notifications for a specific shop
+ *
+ * @async
+ * @param {{ shopDomain: any; limit?: number; sort?: string; }} param0
+ * @param {*} param0.shopDomain
+ * @param {number} [param0.limit=30]
+ * @param {string} [param0.sort='desc']
+ * @returns {unknown}
+ */
+export const getAll = async ({shopDomain, limit = 30, sort = 'desc'}) => {
+  const snapshot = await collection
+    .where('shopDomain', '==', shopDomain)
+    .orderBy('timestamp', sort)
+    .limit(limit)
+    // .select('name', 'title')
+    .get();
+
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...formatDateFields(doc.data())
+  }));
 };
 
 /**
@@ -46,98 +66,69 @@ export const getPaginated = async ({shopDomain, page, limit, sort, after, before
  * @returns {unknown}
  */
 export const getOne = async id => {
-  try {
-    const snapshot = await collection
-      .where('productId', '==', id)
-      .limit(1)
-      .get();
+  const snapshot = await collection
+    .where('productId', '==', id)
+    .limit(1)
+    .get();
 
-    if (snapshot.empty) {
-      console.log('No matching document.');
-      return null;
-    }
-
-    console.log('found 1');
-
-    const doc = snapshot.docs[0];
-    return {id: doc.id, ...doc.data()};
-  } catch (error) {
-    console.error('Error when getting notification document:', error);
+  if (snapshot.empty) {
     return null;
   }
+
+  const doc = snapshot.docs[0];
+  return {id: doc.id, ...formatDateFields(doc.data())};
 };
 
 /**
- * Create a document on a Firestore collection
- * @param {*} param0
+ * Create a new notification document if one with the same productId doesn't already exist
+ *
+ * @async
+ * @param {{ shopDomain: any; firstName: any; city?: string; country?: string; productId: any; productImage: any; productName: any; timestamp: any; }} param0
+ * @param {*} param0.shopDomain
+ * @param {*} param0.firstName
+ * @param {string} [param0.city='']
+ * @param {string} [param0.country='Global']
+ * @param {*} param0.productId
+ * @param {*} param0.productImage
+ * @param {*} param0.productName
+ * @param {*} param0.timestamp
+ * @returns {unknown}
  */
 export const createOne = async ({
   shopDomain,
   firstName,
-  city = '',
-  country = 'Global',
   productId,
   productImage,
   productName,
-  timestamp
+  timestamp,
+  city = '',
+  country = 'Global'
 }) => {
-  try {
-    const ts = timestamp ? Timestamp.fromDate(new Date(timestamp)) : FieldValue.serverTimestamp();
+  const snapshot = await getOne(productId);
 
-    const docRef = await collection.add({
-      shopDomain,
-      firstName,
-      city,
-      country,
-      productId,
-      productImage,
-      productName,
-      timestamp: ts
-    });
-
-    console.log(`Notification Document created with ID: ${docRef.id}`);
-    return docRef.id;
-  } catch (error) {
-    console.error('Error creating document:', error);
-    return error;
-  }
-};
-
-export const deleteOne = async ({id}) => {
-  if (!id) {
-    console.error('Document ID is required');
+  if (!snapshot.empty) {
     return;
   }
-  try {
-    await collection.doc(id).delete();
-    console.log(`Document ${id} deleted successfully`);
-  } catch (error) {
-    console.error('Error when deleting document:', error);
-  }
+  const docRef = await collection.add({
+    shopDomain,
+    firstName,
+    city,
+    country,
+    productId,
+    productImage,
+    productName,
+    timestamp: new Date(timestamp)
+  });
+  return docRef.id;
 };
 
-// Bổ sung xoá theo shopId hoặc shopDomain
-export const dropCollection = async ({batchSize = 100}) => {
-  try {
-    const deleteCollection = async () => {
-      const snapshot = await collection.limit(batchSize).get();
-
-      if (snapshot.empty) {
-        console.log('All documents deleted.');
-        return;
-      }
-
-      const batch = firestore.batch();
-      snapshot.docs.forEach(doc => batch.delete(doc.ref));
-
-      await batch.commit();
-
-      setImmediate(deleteCollection);
-    };
-
-    await deleteCollection();
-    console.log('Collection notifications deleted completely.');
-  } catch (err) {
-    console.error('Error deleting collection:', err);
-  }
+/**
+ * Delete a notification document by its ID
+ *
+ * @async
+ * @param {{ id: any; }} param0
+ * @returns {*}
+ */
+export const deleteOne = async ({id}) => {
+  await collection.doc(id).delete();
 };
